@@ -1,0 +1,571 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIP-C01 Practice Test 1 — GenAI</title><style>
+:root{--bg:#0e131f;--card:#161d2e;--ink:#e8eef7;--mut:#93a1b8;--accent:#8b5cf6;--line:#26314a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif}
+a{color:#a78bfa}a:hover{color:#c4b5fd}
+header.site{border-bottom:1px solid var(--line);background:radial-gradient(900px 400px at 85% -10%,rgba(139,92,246,.18),transparent 60%)}
+.hero{max-width:860px;margin:0 auto;padding:40px 20px 26px}
+.hero .eyebrow{color:#a78bfa;font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:13px}
+.hero h1{font-size:32px;margin:8px 0 6px;letter-spacing:-.4px}
+.hero p{color:var(--mut);margin:6px 0;font-size:15px}
+.wrap{max-width:860px;margin:0 auto;padding:26px 20px 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px}
+.tcard{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;transition:.15s}
+.tcard:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
+.tcard h3{margin:0 0 6px;font-size:21px;color:var(--ink)}
+.tcard .n{color:var(--mut);font-size:14px}
+.back{display:inline-block;margin-bottom:16px;color:var(--mut)}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0}
+.q .head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.q .num{font-weight:700;font-size:17px}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.4px}
+.badge.cat{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.35)}
+.badge.multi{background:rgba(46,204,113,.14);color:#7ee6a8;border:1px solid rgba(46,204,113,.4)}
+.qtext{margin:6px 0 12px}
+.opts{list-style:none;padding:0;margin:0}
+.opts li{padding:8px 12px;border:1px solid var(--line);border-radius:9px;margin:7px 0;background:#111828}
+.opts li .l{color:#a78bfa;font-weight:700;margin-right:8px}
+details{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+summary{cursor:pointer;color:#a78bfa;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"\25B8  "}
+details[open] summary::before{content:"\25BE  "}
+.ans{margin-top:10px}
+.ans .correctline{font-weight:700;color:#7ee6a8;margin-bottom:6px}
+.src{margin-top:12px;font-size:14px;color:var(--mut)}
+.src a{font-weight:600}
+footer{border-top:1px solid var(--line);color:var(--mut);font-size:13px;padding:24px 20px;text-align:center}
+</style></head><body><header class="site"><div class="hero">
+<div class="eyebrow">AWS Certified · Specialty Practice</div>
+<h1>Generative AI Developer – Professional (AIP-C01) — Practice Test 1</h1>
+<p>75 exam-style questions with explanations. Each answer links to the official AWS documentation that backs it.</p>
+</div></header>
+<div class="wrap"><a class="back" href="index.html">&larr; All practice tests</a><div class="q"><div class="head"><span class="num">Question 1</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">A development team wants to call Anthropic Claude, Meta Llama, and Amazon Titan models from a single application using one consistent request/response format, including multi-turn conversation history and tool use, without writing model-specific payload builders. Which Amazon Bedrock capability best meets this requirement?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Use InvokeModel and hand-craft the JSON body for each model provider</li><li><span class="l">B</span>Create a separate inference profile per model and switch between them</li><li><span class="l">C</span>Deploy each model to Provisioned Throughput and route by endpoint</li><li><span class="l">D</span>Use the Converse API, which provides a unified messages-based interface across supported models</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>The Converse API exposes a single, consistent messages-based schema across supported Bedrock models and natively supports conversation turns and tool use, eliminating per-provider payload code. InvokeModel requires provider-specific request bodies. Inference profiles and Provisioned Throughput address routing and capacity, not payload normalization.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/converse-api.html" target="_blank" rel="noopener">Amazon Bedrock — Converse API</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 2</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">A company is building a chat feature and wants tokens to appear in the UI as the model generates them, rather than waiting for the entire completion. Which approach should they use with Amazon Bedrock?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Enable batch inference so results are returned faster</li><li><span class="l">B</span>Use Provisioned Throughput to lower first-token latency to zero</li><li><span class="l">C</span>Call InvokeModelWithResponseStream (or Converse streaming) to receive incremental response chunks</li><li><span class="l">D</span>Poll the model invocation logs in CloudWatch for partial outputs</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Bedrock supports streaming responses via InvokeModelWithResponseStream and the Converse streaming operation, delivering output incrementally for real-time UIs. Batch inference is asynchronous and optimized for throughput, not interactive streaming. Provisioned Throughput reserves capacity but does not stream, and logs are not an output channel.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference.html" target="_blank" rel="noopener">Amazon Bedrock — Run inference</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 3</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">An enterprise needs a guaranteed, consistent level of model throughput for a production workload with predictable high volume, and is willing to commit for a term to obtain it. Which Amazon Bedrock feature is designed for this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Provisioned Throughput, which reserves model capacity for a committed term</li><li><span class="l">B</span>Cross-region inference profiles</li><li><span class="l">C</span>Batch inference with an S3 manifest</li><li><span class="l">D</span>On-demand inference with automatic scaling</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Provisioned Throughput reserves a fixed amount of model units for consistent throughput and is purchased for a commitment term, ideal for steady high-volume production traffic. On-demand is billed per request without guaranteed capacity, batch is asynchronous, and cross-region inference distributes traffic but does not reserve capacity.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prov-throughput.html" target="_blank" rel="noopener">Amazon Bedrock — Provisioned Throughput</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 4</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">A data team must summarize 2 million historical support tickets stored in Amazon S3. Latency per ticket does not matter, but they want the lowest possible cost for this large one-time job. Which Amazon Bedrock inference option is most appropriate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Batch inference, which processes records asynchronously from S3 at a reduced price</li><li><span class="l">B</span>Provisioned Throughput for the duration of the job</li><li><span class="l">C</span>Streaming inference with the Converse API</li><li><span class="l">D</span>Real-time InvokeModel calls in a tight loop</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Batch inference reads input records from S3, processes them asynchronously, and is offered at a lower price than on-demand, making it ideal for large latency-insensitive jobs. Real-time loops incur on-demand pricing and rate limits, Provisioned Throughput is for sustained low-latency capacity, and streaming targets interactive use.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html" target="_blank" rel="noopener">Amazon Bedrock — Batch inference</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 5</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">Before an application can call a specific foundation model such as Anthropic Claude in a given AWS Region, what must an account administrator do first in Amazon Bedrock?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Request and be granted model access for that model in that Region</li><li><span class="l">B</span>Attach the model to a VPC interface endpoint</li><li><span class="l">C</span>Create a Knowledge Base referencing the model</li><li><span class="l">D</span>Purchase Provisioned Throughput for the model</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Bedrock requires explicitly requesting model access per model (and per Region) before invocation is allowed; without granted access, calls are denied. Provisioned Throughput, Knowledge Bases, and VPC endpoints are optional features that do not, by themselves, unlock a model.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html" target="_blank" rel="noopener">Amazon Bedrock — Model access</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 6</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which statements accurately describe Amazon Bedrock as a service? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>It is a fully managed service that provides access to foundation models through a single API</li><li><span class="l">B</span>It offers models from multiple providers as well as Amazon's own models</li><li><span class="l">C</span>It is available exclusively as an on-premises software package</li><li><span class="l">D</span>It requires you to provision and manage the GPU clusters that host each model</li><li><span class="l">E</span>It only supports Amazon Titan models and no third-party models</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A, B</div>Bedrock is a fully managed, serverless service exposing multiple providers' foundation models plus Amazon's own (Titan, Nova) through a unified API. You do not manage the underlying GPU infrastructure, it is not Titan-only, and it is a cloud service, not on-premises software.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html" target="_blank" rel="noopener">Amazon Bedrock — What is Amazon Bedrock</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 7</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">A team repeatedly sends the same large system prompt and reference document as a prefix to every request, followed by a short user question. They want to reduce cost and latency on the repeated prefix. Which Amazon Bedrock feature directly addresses this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Provisioned Throughput to reserve capacity</li><li><span class="l">B</span>Cross-region inference to spread load</li><li><span class="l">C</span>Batch inference to process prompts together</li><li><span class="l">D</span>Prompt caching, which reuses previously processed prompt prefixes</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Prompt caching lets Bedrock reuse the compute for a repeated prompt prefix (such as a static system prompt or document), lowering latency and cost on cache hits. Provisioned Throughput and cross-region inference manage capacity/routing, and batch inference targets asynchronous bulk jobs, none of which cache prefixes.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html" target="_blank" rel="noopener">Amazon Bedrock — Prompt caching</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 8</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">An application is hitting on-demand throttling for a popular model during peak hours in a single Region. The team wants Bedrock to automatically route requests across multiple Regions to increase available capacity without changing model IDs per Region in code. Which capability should they adopt?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Batch inference to defer the peak traffic</li><li><span class="l">B</span>Cross-region inference using a system-defined inference profile</li><li><span class="l">C</span>Provisioned Throughput in the primary Region only</li><li><span class="l">D</span>A dedicated VPC endpoint per Region</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Cross-region inference (invoked through an inference profile) automatically routes on-demand requests to multiple Regions to absorb spikes and reduce throttling, using a single profile identifier. Provisioned Throughput in one Region does not add cross-Region capacity, batch changes the interaction model, and VPC endpoints handle private connectivity, not capacity distribution.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html" target="_blank" rel="noopener">Amazon Bedrock — Cross-region inference</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 9</span>
+<span class="badge cat">Amazon Bedrock Fundamentals</span></div>
+<div class="qtext">A platform team wants to track and manage usage and route requests to a specific model or across Regions using a single reusable identifier, and to attach cost-allocation tags. Which Amazon Bedrock construct provides this abstraction?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>An inference profile</li><li><span class="l">B</span>A Knowledge Base</li><li><span class="l">C</span>A prompt flow</li><li><span class="l">D</span>A guardrail</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Inference profiles are Bedrock resources that reference a model (or multiple Regions for cross-region inference) behind one ARN, enabling usage tracking, tagging, and routing. Knowledge Bases handle RAG, guardrails enforce safety policies, and prompt flows orchestrate prompts, none of which serve as the invocation routing/tracking identifier.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles.html" target="_blank" rel="noopener">Amazon Bedrock — Inference profiles</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 10</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A company must choose a foundation model in Amazon Bedrock and wants to compare candidate models on accuracy and robustness for their summarization task using their own labeled dataset, with quantitative metrics. Which Bedrock capability should they use?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Provisioned Throughput benchmarking</li><li><span class="l">B</span>Guardrails contextual grounding checks</li><li><span class="l">C</span>Prompt caching statistics</li><li><span class="l">D</span>Model evaluation jobs (automatic evaluation) with a custom dataset</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Bedrock model evaluation supports automatic evaluation against task types using built-in or custom datasets to produce quantitative metrics for comparing models. Provisioned Throughput measures capacity, guardrails enforce safety, and prompt caching reports cache hits, none of which compare model quality on a labeled dataset.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-evaluation.html" target="_blank" rel="noopener">Amazon Bedrock — Model evaluation</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 11</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A team needs a Bedrock model that natively accepts both text and images in a single prompt for a visual question-answering feature. What is the correct way to identify a suitable model?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Use any text-only model and base64-encode the image into the text field</li><li><span class="l">B</span>Select a supported multimodal foundation model whose documented input modalities include text and image</li><li><span class="l">C</span>Fine-tune a text embedding model to accept images</li><li><span class="l">D</span>Enable Provisioned Throughput, which adds vision support to any model</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Model selection must be based on documented supported modalities; multimodal models (for example certain Claude and Nova models) accept image plus text input. Encoding an image as text does not give a text-only model vision, embedding models produce vectors not chat answers, and Provisioned Throughput only reserves capacity.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html" target="_blank" rel="noopener">Amazon Bedrock — Supported foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 12</span>
+<span class="badge cat">Foundation Model Selection</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">When selecting a foundation model on Amazon Bedrock for a production feature, which factors are legitimate technical criteria to evaluate? (Select THREE.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Model quality metrics on a representative evaluation of your task</li><li><span class="l">B</span>Supported modalities (text, image, etc.) required by the use case</li><li><span class="l">C</span>The alphabetical order of the model provider's name</li><li><span class="l">D</span>The model's maximum context window size relative to your input length</li><li><span class="l">E</span>The color of the provider's logo in the console</li><li><span class="l">F</span>Whether the model's ARN contains the word 'premium'</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A, B, D</div>Context window, supported modalities, and measured task quality are core, legitimate selection criteria that map to functional requirements. Provider name ordering, ARN wording, and logo color are irrelevant and have no bearing on model suitability.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html" target="_blank" rel="noopener">Amazon Bedrock — Supported foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 13</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A regulated customer wants assurance that when they use a Bedrock foundation model, their prompts and completions are not used to train the base foundation models. Where is this guarantee established?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>It must be requested per model via a support ticket</li><li><span class="l">B</span>It is only true when Guardrails are enabled</li><li><span class="l">C</span>It only applies if Provisioned Throughput is purchased</li><li><span class="l">D</span>Bedrock's data protection commitments state that customer content is not used to train the base foundation models</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Bedrock's data protection documentation states that customer inputs and outputs are not shared with model providers or used to train the underlying base models. This is a service-wide commitment, not gated on support tickets, Provisioned Throughput, or Guardrails.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html" target="_blank" rel="noopener">Amazon Bedrock — Data protection</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 14</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A startup wants the lowest-cost, lowest-latency model for a simple, high-volume text classification task where top-tier reasoning is unnecessary. What is the most appropriate selection strategy?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Always choose the largest available model for maximum accuracy</li><li><span class="l">B</span>Choose a smaller, faster model tier and validate its accuracy on the task before committing</li><li><span class="l">C</span>Choose an embedding model because embeddings are cheaper</li><li><span class="l">D</span>Choose a multimodal model to future-proof the design</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>For simple high-volume tasks, a smaller/faster model minimizes cost and latency, and you validate that its accuracy suffices before committing. The largest model wastes cost, embedding models return vectors not classifications, and adding unneeded multimodality increases cost without benefit.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html" target="_blank" rel="noopener">Amazon Bedrock — Supported foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 15</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A team wants a defensible, reproducible comparison of two candidate models on open-ended answer quality where no single reference answer exists, without hiring human raters for every run. Which Bedrock model evaluation approach fits best?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Comparing CloudWatch invocation counts</li><li><span class="l">B</span>Only human evaluation, since automated scoring is impossible</li><li><span class="l">C</span>Contextual grounding checks in Guardrails</li><li><span class="l">D</span>LLM-as-a-judge automatic evaluation, where a model scores outputs against defined criteria</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Bedrock model evaluation offers LLM-as-a-judge, using a judge model to score open-ended outputs against criteria, giving reproducible quality comparisons without per-run human raters. Human evaluation is supported but not the only option, guardrail grounding checks target hallucination at inference time, and invocation counts measure volume, not quality.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-evaluation.html" target="_blank" rel="noopener">Amazon Bedrock — Model evaluation</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 16</span>
+<span class="badge cat">Foundation Model Selection</span></div>
+<div class="qtext">A team's use case requires a 200K-token context to feed an entire contract into a single prompt. When choosing a model, which documented attribute is the decisive constraint?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>The number of Regions where the model is available</li><li><span class="l">B</span>Whether the model supports streaming</li><li><span class="l">C</span>The model's supported maximum context window (token limit)</li><li><span class="l">D</span>The model's Provisioned Throughput price</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Fitting a 200K-token contract in one prompt requires a model whose documented maximum context window is at least that size, making context length the decisive constraint. Pricing, streaming, and Regional availability matter operationally but do not determine whether the input physically fits.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html" target="_blank" rel="noopener">Amazon Bedrock — Supported foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 17</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">A developer wants to reliably steer a model's persona, output format, and global rules separately from the end user's turn-by-turn input when using the Converse API. What is the recommended mechanism?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Encode the rules as an assistant-role message only</li><li><span class="l">B</span>Place the rules in the model's stop sequences</li><li><span class="l">C</span>Concatenate everything into a single user message</li><li><span class="l">D</span>Provide instructions in the system prompt field, keeping user content in user-role messages</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>The Converse API exposes a dedicated system field for high-level instructions (persona, format, rules), which is the recommended place to steer behavior distinctly from user turns. Concatenating into a user message blurs roles, stop sequences only halt generation, and putting rules solely in an assistant message misuses the role structure.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/converse-api.html" target="_blank" rel="noopener">Amazon Bedrock — Converse API</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 18</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">A team wants to centrally create, version, and test prompt templates with variables, and reuse them across applications on Amazon Bedrock without hardcoding strings in each service. Which Bedrock feature supports this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Model invocation logging</li><li><span class="l">B</span>Provisioned Throughput</li><li><span class="l">C</span>Cross-region inference</li><li><span class="l">D</span>Prompt management (Prompt Management in Bedrock)</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Bedrock Prompt Management lets teams author, version, variable-parameterize, and test prompts as reusable resources shared across applications. Provisioned Throughput handles capacity, invocation logging captures request/response records, and cross-region inference routes traffic, none of which manage prompt templates.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management.html" target="_blank" rel="noopener">Amazon Bedrock — Prompt management</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 19</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">A model keeps producing verbose answers when the team needs strictly a JSON object. Which prompt-engineering technique most directly increases the likelihood of correctly formatted structured output?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Remove the system prompt entirely</li><li><span class="l">B</span>Increase the temperature to encourage creativity</li><li><span class="l">C</span>Explicitly specify the exact JSON schema and provide a one- or two-shot example of the desired output</li><li><span class="l">D</span>Ask the same question repeatedly in one prompt</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Clearly specifying the target schema and giving few-shot examples strongly biases the model toward the exact structured format. Raising temperature increases randomness (hurting consistency), removing the system prompt loses steering, and repeating the question does not improve formatting.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management.html" target="_blank" rel="noopener">Amazon Bedrock — Prompt management</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 20</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">For a complex multi-step reasoning problem where the model often skips steps and gets the final answer wrong, which prompting approach is most likely to improve accuracy?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Lower max tokens so the model answers immediately</li><li><span class="l">B</span>Set temperature to its maximum value</li><li><span class="l">C</span>Instruct the model to answer in a single word only</li><li><span class="l">D</span>Prompt the model to reason step by step before giving the final answer (chain-of-thought)</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Encouraging explicit step-by-step reasoning (chain-of-thought) generally improves accuracy on multi-step problems by allocating intermediate reasoning. Cutting max tokens or forcing one-word answers suppresses the reasoning that helps, and maximum temperature increases randomness rather than correctness.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management.html" target="_blank" rel="noopener">Amazon Bedrock — Prompt management</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 21</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">A developer wants a deterministic, repeatable answer for a factual extraction prompt so identical inputs yield near-identical outputs. Which inference parameter setting best supports this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Increase the maximum token limit</li><li><span class="l">B</span>Enable streaming responses</li><li><span class="l">C</span>Set temperature to 1.0 and top-p to 1.0</li><li><span class="l">D</span>Set temperature (and top-p) low, near zero, to reduce randomness</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Low temperature (and low top-p) reduces sampling randomness, yielding more deterministic, repeatable outputs suited to extraction. A temperature of 1.0 maximizes variability, the token limit only bounds length, and streaming changes delivery, not determinism.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference.html" target="_blank" rel="noopener">Amazon Bedrock — Run inference</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 22</span>
+<span class="badge cat">Prompt Engineering</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which techniques are effective for reducing hallucinations in foundation model responses through prompt and context design? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Remove all instructions and let the model answer freely</li><li><span class="l">B</span>Ground the model with retrieved, relevant source passages (RAG) included in the prompt</li><li><span class="l">C</span>Raise the temperature so the model explores more possibilities</li><li><span class="l">D</span>Ask the model to invent citations if it is unsure</li><li><span class="l">E</span>Instruct the model to answer only from the provided context and to say it does not know when the context is insufficient</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B, E</div>Constraining the model to the provided context (and permitting an 'I don't know') plus supplying retrieved grounding passages both reduce fabrication. Raising temperature, stripping instructions, and inviting invented citations all increase hallucination risk.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Bases</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 23</span>
+<span class="badge cat">Prompt Engineering</span></div>
+<div class="qtext">A team is building a prompt flow that chains a classification prompt into one of two downstream prompts based on the classification result, all managed within Amazon Bedrock. Which feature enables this orchestration natively?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Batch inference job chaining</li><li><span class="l">B</span>Prompt flows in Bedrock Prompt Management, which link prompts and logic into a workflow</li><li><span class="l">C</span>Provisioned Throughput scheduling</li><li><span class="l">D</span>Cross-region inference routing</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Prompt flows let you visually connect prompts, conditions, and other nodes into an orchestrated workflow within Bedrock. Provisioned Throughput, batch inference, and cross-region inference deal with capacity, bulk processing, and routing respectively, not prompt orchestration.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management.html" target="_blank" rel="noopener">Amazon Bedrock — Prompt management</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 24</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">A team wants a managed way to connect their S3 documents to a foundation model so that user questions are answered using their private data, without building their own ingestion, chunking, embedding, and retrieval pipeline. Which Amazon Bedrock feature should they use?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Knowledge Bases for Amazon Bedrock</li><li><span class="l">B</span>Provisioned Throughput</li><li><span class="l">C</span>Prompt caching</li><li><span class="l">D</span>Model invocation logging</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Knowledge Bases for Amazon Bedrock provide a fully managed RAG pipeline: ingestion, chunking, embedding, vector storage, and retrieval integrated with generation. Provisioned Throughput reserves capacity, invocation logging records calls, and prompt caching reuses prefixes, none of which implement RAG.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Bases</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 25</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">In a Bedrock Knowledge Base, what is the correct high-level sequence of what happens to source documents so they can be retrieved at query time?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Documents are converted to guardrail policies</li><li><span class="l">B</span>Documents are compiled into Lambda functions</li><li><span class="l">C</span>Documents are chunked, each chunk is embedded into a vector, and vectors are stored in a vector index for similarity search</li><li><span class="l">D</span>Documents are fine-tuned into the base model weights</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>The RAG ingestion flow chunks documents, generates embeddings per chunk, and stores those vectors in a vector store for similarity retrieval at query time. Fine-tuning weights, guardrail policies, and Lambda compilation are unrelated to how Knowledge Bases index content.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html" target="_blank" rel="noopener">Amazon Bedrock — How Knowledge Bases work (RAG)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 26</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">A Knowledge Base is returning chunks that split sentences mid-thought and lose surrounding context, hurting answer quality. The team wants overlapping context preserved between adjacent chunks. Which chunking configuration should they consider?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Disable chunking so each document is a single chunk regardless of size</li><li><span class="l">B</span>Use fixed-size chunking with a configured overlap, or a semantic/hierarchical chunking strategy</li><li><span class="l">C</span>Increase Provisioned Throughput on the model</li><li><span class="l">D</span>Switch the embedding model to a larger dimension</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Bedrock Knowledge Bases support configurable chunking including fixed-size with overlap and semantic/hierarchical strategies that better preserve context across boundaries. Disabling chunking can exceed embedding limits and hurt retrieval granularity, embedding dimensions do not fix boundary loss, and Provisioned Throughput is unrelated to chunk quality.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Base chunking &amp; parsing</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 27</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">A Knowledge Base ingests PDFs that contain complex tables and images with embedded text. The team needs higher-fidelity extraction of that content during ingestion. Which capability addresses this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Advanced parsing (for example using a foundation model parser) during data source ingestion</li><li><span class="l">B</span>Increasing the vector index shard count</li><li><span class="l">C</span>Enabling cross-region inference on the KB</li><li><span class="l">D</span>Turning on prompt caching</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Knowledge Bases offer advanced parsing options (including FM-based parsing) to extract complex elements like tables and images from documents during ingestion. Cross-region inference, shard counts, and prompt caching do not affect how documents are parsed into text.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Base chunking &amp; parsing</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 28</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which vector stores can serve as the vector index for a Knowledge Base for Amazon Bedrock? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Amazon DynamoDB with a global secondary index</li><li><span class="l">B</span>Amazon Aurora PostgreSQL with the pgvector extension</li><li><span class="l">C</span>Amazon Kinesis Data Streams</li><li><span class="l">D</span>Amazon OpenSearch Serverless</li><li><span class="l">E</span>Amazon SQS FIFO queues</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B, D</div>Knowledge Bases support vector stores such as Amazon OpenSearch Serverless and Aurora PostgreSQL (pgvector), among others. DynamoDB, SQS, and Kinesis are not vector databases and cannot serve as the KB vector index.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported-vector-store.html" target="_blank" rel="noopener">Amazon Bedrock — Supported vector stores</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 29</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">After adding new documents to the S3 bucket backing a Knowledge Base data source, the new content is not appearing in answers. What must be done for the new documents to become retrievable?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Purchase Provisioned Throughput for the embedding model</li><li><span class="l">B</span>Start an ingestion (sync) job on the data source to process and index the new documents</li><li><span class="l">C</span>Recreate the entire Knowledge Base from scratch</li><li><span class="l">D</span>Enable guardrails on the Knowledge Base</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>New or changed source files become retrievable only after a data source sync/ingestion job chunks, embeds, and indexes them. Recreating the KB is unnecessary, Provisioned Throughput does not index documents, and guardrails govern safety, not ingestion.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-data-source.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Base data sources</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 30</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">An application needs the Knowledge Base to return only the relevant retrieved passages (and their source locations) so the application can build its own custom prompt and call a model separately. Which Knowledge Base operation should it use?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Retrieve, which returns matching chunks without generating an answer</li><li><span class="l">B</span>RetrieveAndGenerate, which always returns a generated answer</li><li><span class="l">C</span>InvokeModel with the raw documents</li><li><span class="l">D</span>StartIngestionJob</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>The Retrieve API returns the relevant chunks and source metadata without generating a response, letting the app control prompt construction and generation. RetrieveAndGenerate produces an answer directly, InvokeModel does not query the KB, and StartIngestionJob indexes data rather than retrieving it.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html" target="_blank" rel="noopener">Amazon Bedrock — How Knowledge Bases work (RAG)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 31</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">A team wants the Knowledge Base to both retrieve relevant context and generate a grounded answer in one managed call, with citations back to the source documents. Which operation provides this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Converse without a Knowledge Base</li><li><span class="l">B</span>RetrieveAndGenerate</li><li><span class="l">C</span>StartIngestionJob</li><li><span class="l">D</span>Retrieve</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>RetrieveAndGenerate performs retrieval plus generation in a single managed call and returns citations to the source documents. Retrieve returns only chunks, plain Converse has no KB grounding, and StartIngestionJob is for indexing data.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html" target="_blank" rel="noopener">Amazon Bedrock — Knowledge Bases</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 32</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span></div>
+<div class="qtext">A Knowledge Base returns semantically related but sometimes off-topic passages for keyword-heavy queries (e.g., exact product SKUs). The team wants to combine semantic similarity with keyword matching to improve precision. Which retrieval configuration helps?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Reduce the number of retrieved results to one</li><li><span class="l">B</span>Use hybrid search (combining semantic vector search with keyword/lexical search) where supported</li><li><span class="l">C</span>Switch to batch inference</li><li><span class="l">D</span>Disable embeddings and use only the base model</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Hybrid search blends semantic vector similarity with lexical keyword matching, improving precision on exact-token queries like SKUs. Disabling embeddings breaks RAG, batch inference is unrelated, and simply returning one result does not fix relevance.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html" target="_blank" rel="noopener">Amazon Bedrock — How Knowledge Bases work (RAG)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 33</span>
+<span class="badge cat">RAG &amp; Knowledge Bases</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which practices help improve answer quality and traceability in a Bedrock Knowledge Base RAG solution? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Surface source citations returned by RetrieveAndGenerate to end users</li><li><span class="l">B</span>Store raw documents only in a relational table with no vector index</li><li><span class="l">C</span>Use a random embedding model unrelated to the query language</li><li><span class="l">D</span>Skip data source syncs after the initial load</li><li><span class="l">E</span>Tune chunking strategy and size to match the structure of the source documents</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A, E</div>Matching chunking to document structure improves retrieval relevance, and surfacing the citations from RetrieveAndGenerate improves traceability and user trust. A relational table without a vector index cannot do similarity search, a mismatched embedding model degrades retrieval, and skipping syncs leaves new content unindexed.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html" target="_blank" rel="noopener">Amazon Bedrock — How Knowledge Bases work (RAG)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 34</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">A team needs to convert text into dense numerical vectors on Amazon Bedrock to power semantic search. Which model type and Amazon offering is appropriate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>A guardrail policy configured for search</li><li><span class="l">B</span>Amazon Titan Text Embeddings, a text embedding model that outputs vector representations</li><li><span class="l">C</span>A text-generation chat model called with a summarize prompt</li><li><span class="l">D</span>A Provisioned Throughput profile</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Amazon Titan Text Embeddings is purpose-built to transform text into embedding vectors for semantic search and similarity. A chat model generates text rather than embeddings, guardrails enforce safety, and Provisioned Throughput only reserves capacity.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 35</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">For semantic similarity between a query embedding and stored document embeddings, which distance/similarity measure is most commonly used with text embedding vectors?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Cosine similarity</li><li><span class="l">B</span>Levenshtein edit distance</li><li><span class="l">C</span>Exact string equality</li><li><span class="l">D</span>TCP round-trip time</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Cosine similarity measures the angle between embedding vectors and is the standard metric for semantic similarity in text search. Levenshtein distance compares character edits, string equality misses semantic meaning, and round-trip time is a network metric.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 36</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">A team migrated their corpus to a new embedding model with a different vector dimension. Existing stored vectors now return poor or failing search results. What is the correct remedy?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Lower the model temperature</li><li><span class="l">B</span>Re-embed the entire corpus with the new model and reindex, ensuring the index dimension matches the model</li><li><span class="l">C</span>Pad the old vectors with zeros to match the new dimension</li><li><span class="l">D</span>Keep the old vectors and query with the new model's embeddings</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Embeddings from different models are not comparable and dimensions must match the index, so the corpus must be re-embedded and reindexed with the new model. Querying old vectors with new embeddings mixes incompatible spaces, zero-padding does not restore meaning, and temperature does not apply to embeddings.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 37</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which AWS services can be used as a vector store to hold embeddings for similarity search? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>AWS Step Functions</li><li><span class="l">B</span>Amazon CloudFront</li><li><span class="l">C</span>Amazon Route 53</li><li><span class="l">D</span>Amazon Aurora PostgreSQL with pgvector</li><li><span class="l">E</span>Amazon OpenSearch Service / OpenSearch Serverless with a vector index</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D, E</div>OpenSearch (Service or Serverless) with a vector/k-NN index and Aurora PostgreSQL with pgvector both store and search embedding vectors. CloudFront (CDN), Step Functions (orchestration), and Route 53 (DNS) are not vector databases.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported-vector-store.html" target="_blank" rel="noopener">Amazon Bedrock — Supported vector stores</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 38</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">A search feature must find documents that are conceptually related to a query even when they share no exact keywords (e.g., 'car' matching 'automobile'). Which approach delivers this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Regular expression matching</li><li><span class="l">B</span>Sorting documents alphabetically</li><li><span class="l">C</span>Exact keyword (lexical) matching only</li><li><span class="l">D</span>Embedding-based semantic (vector) search</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Semantic vector search captures meaning, so conceptually related terms like 'car' and 'automobile' match despite different tokens. Pure keyword matching, regex, and alphabetical sorting rely on surface tokens and miss semantic relationships.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 39</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">A team is choosing an embedding output dimension for Titan Text Embeddings to balance storage/latency against retrieval quality. What is a valid consideration?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Larger dimensions always reduce cost</li><li><span class="l">B</span>Dimension has no effect on storage or search</li><li><span class="l">C</span>Smaller dimensions reduce storage and can lower latency but may reduce retrieval accuracy, so choose based on quality/cost trade-offs</li><li><span class="l">D</span>Dimension must equal the model's temperature setting</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Embedding dimension is a trade-off: smaller vectors cut storage and can speed search but may reduce accuracy, so it should be chosen against quality/cost needs. Larger dimensions increase storage, dimension clearly affects storage and search, and temperature is unrelated to embeddings.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 40</span>
+<span class="badge cat">Embeddings &amp; Vector Stores</span></div>
+<div class="qtext">To keep semantic search accurate, how should the same text-embedding model be applied across a corpus and incoming queries?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Embed both the documents and the queries with the same embedding model so they share one vector space</li><li><span class="l">B</span>Embed only documents and compare queries by keyword</li><li><span class="l">C</span>Embed queries with a text-generation model</li><li><span class="l">D</span>Embed documents with one model and queries with a different model for diversity</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Documents and queries must be embedded with the same model so their vectors occupy a comparable space; otherwise similarity scores are meaningless. Using different models, keyword-only queries, or a text-generation model for embeddings breaks the shared vector space.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html" target="_blank" rel="noopener">Amazon Bedrock — Titan Text Embeddings</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 41</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">A company has thousands of labeled prompt-and-response pairs showing their desired tone and task behavior. They want a Bedrock model adapted to this behavior. Which customization method fits?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Cross-region inference</li><li><span class="l">B</span>Fine-tuning with the labeled prompt/completion dataset</li><li><span class="l">C</span>Continued pre-training on unlabeled text</li><li><span class="l">D</span>Prompt caching</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Fine-tuning uses labeled prompt/completion pairs to adapt a model to a specific task or style, which matches having thousands of labeled examples. Continued pre-training uses unlabeled domain text, prompt caching reuses prefixes, and cross-region inference routes traffic, none of which learn from labeled pairs.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization.html" target="_blank" rel="noopener">Amazon Bedrock — Model customization</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 42</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">A firm has a large volume of unlabeled internal domain text (manuals, reports) and wants a model to better understand their domain vocabulary before any task-specific tuning. Which Bedrock customization approach is appropriate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Provisioned Throughput</li><li><span class="l">B</span>Continued pre-training on the unlabeled domain corpus</li><li><span class="l">C</span>Fine-tuning, which requires labeled pairs they do not have</li><li><span class="l">D</span>Guardrails denied topics</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Continued pre-training adapts a model to domain knowledge using large unlabeled text corpora, which fits having manuals and reports without labels. Fine-tuning needs labeled examples, guardrails enforce safety, and Provisioned Throughput only reserves capacity.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization.html" target="_blank" rel="noopener">Amazon Bedrock — Model customization</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 43</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">After a fine-tuning job completes in Amazon Bedrock, what is required before the resulting custom model can serve inference?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Enable model invocation logging</li><li><span class="l">B</span>Purchase Provisioned Throughput for the custom model to host it for inference</li><li><span class="l">C</span>Attach the custom model to a Knowledge Base</li><li><span class="l">D</span>Nothing; custom models are automatically available on-demand like base models</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Custom (fine-tuned) models in Bedrock require Provisioned Throughput to be deployed for inference; they are not served through standard on-demand access. Knowledge Base attachment and invocation logging are unrelated prerequisites for hosting a custom model.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/custom-models.html" target="_blank" rel="noopener">Amazon Bedrock — Custom models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 44</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which statements about preparing data for fine-tuning a foundation model in Amazon Bedrock are correct? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Training data should be provided in the expected format (e.g., JSON Lines with prompt/completion fields) stored in Amazon S3</li><li><span class="l">B</span>The training data must be embedded into vectors before submitting the job</li><li><span class="l">C</span>Training data must be loaded into a Knowledge Base first</li><li><span class="l">D</span>Fine-tuning requires no training data at all</li><li><span class="l">E</span>Higher-quality, representative examples generally produce a better fine-tuned model than a larger but noisy dataset</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A, E</div>Bedrock fine-tuning expects properly formatted training data (such as JSONL with the required fields) in S3, and data quality/representativeness matters more than sheer volume. Fine-tuning does not embed data into vectors, cannot proceed with no data, and does not route data through a Knowledge Base.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization.html" target="_blank" rel="noopener">Amazon Bedrock — Model customization</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 45</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">A team must decide between RAG and fine-tuning for keeping a support assistant current with frequently changing product documentation. Which choice is most appropriate and why?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Continued pre-training, because it updates instantly</li><li><span class="l">B</span>Fine-tune nightly, because fine-tuning is cheaper than retrieval</li><li><span class="l">C</span>Use RAG, because it retrieves the latest documents at query time without retraining the model</li><li><span class="l">D</span>Prompt caching, because it stores the latest documents as facts</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>RAG retrieves up-to-date documents at query time, making it ideal for frequently changing content without repeated retraining. Nightly fine-tuning is costly and lags changes, continued pre-training is not instant, and prompt caching only reuses prompt prefixes, not authoritative fresh facts.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/custom-models.html" target="_blank" rel="noopener">Amazon Bedrock — Custom models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 46</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">During fine-tuning, a customer wants assurance about how their proprietary training data is handled by Amazon Bedrock. Which statement is accurate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>The resulting custom model is private to the customer's account and the training data is not used to train the base models</li><li><span class="l">B</span>Custom models are published to the Bedrock model catalog for all customers</li><li><span class="l">C</span>Training data must be made public in an S3 bucket</li><li><span class="l">D</span>Fine-tuning data is shared with the base model provider to improve the public model</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>A fine-tuned custom model is private to the customer's account, and customer data is not used to train the underlying base models. It is not shared with providers, not published to other customers, and does not require public data.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html" target="_blank" rel="noopener">Amazon Bedrock — Data protection</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 47</span>
+<span class="badge cat">Model Customization &amp; Fine-Tuning</span></div>
+<div class="qtext">A fine-tuned model performs well on training-like inputs but poorly on slightly different real-world prompts, a classic sign of overfitting. Which adjustment is most appropriate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Increase dataset diversity/quality and tune hyperparameters (e.g., fewer epochs) to improve generalization</li><li><span class="l">B</span>Add a guardrail denied-topics policy</li><li><span class="l">C</span>Switch to on-demand inference to fix accuracy</li><li><span class="l">D</span>Train for many more epochs on the same small dataset</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Overfitting is addressed by more diverse/representative data and hyperparameter tuning such as reducing epochs to improve generalization. Training many more epochs on the same small set worsens overfitting, inference mode does not change learned behavior, and guardrails filter content rather than fix generalization.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization.html" target="_blank" rel="noopener">Amazon Bedrock — Model customization</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 48</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">A team wants a Bedrock Agent to call a backend function that looks up order status. Which mechanism defines the callable operation and connects it to the compute that runs it?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>A Knowledge Base data source</li><li><span class="l">B</span>An action group that defines the API (OpenAPI schema or function definitions) and is backed by an AWS Lambda function</li><li><span class="l">C</span>An inference profile</li><li><span class="l">D</span>A guardrail denied-topics policy</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Agent action groups define the available operations (via an OpenAPI schema or function definitions) and are backed by Lambda (or return control) to execute the logic. Guardrails enforce safety, Knowledge Bases provide retrieval, and inference profiles handle routing, not action execution.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents-action-create.html" target="_blank" rel="noopener">Amazon Bedrock — Agent action groups</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 49</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">What is the primary role of a Bedrock Agent's orchestration process at runtime?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>It encrypts the model weights before inference</li><li><span class="l">B</span>It stores embeddings in a vector index</li><li><span class="l">C</span>It provisions GPU capacity for the account</li><li><span class="l">D</span>It uses the model to reason over the user request, decide which action groups or knowledge bases to invoke, and chain steps to fulfill the task</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Agent orchestration uses the foundation model to interpret the request, plan and select action groups and knowledge bases, and iterate through steps until the task is complete. Encryption, capacity provisioning, and embedding storage are not the orchestration loop's function.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html" target="_blank" rel="noopener">Amazon Bedrock — Agents</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 50</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">Using the Converse API tool use flow, after the model returns a tool-use request, what must the application do to continue the conversation correctly?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Execute the requested tool and send the tool result back to the model in a subsequent message so it can produce the final answer</li><li><span class="l">B</span>Ignore the tool request and re-ask the user the original question</li><li><span class="l">C</span>Immediately lower the temperature and resend the same prompt</li><li><span class="l">D</span>Convert the tool request into a guardrail policy</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>In the Converse tool use flow, the app runs the requested tool and returns a tool result message; the model then incorporates that result to generate its final response. Ignoring the request, changing temperature, or creating a guardrail does not complete the tool-use loop.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html" target="_blank" rel="noopener">Amazon Bedrock — Tool use (function calling)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 51</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">A complex workflow requires several specialized agents (a billing agent, a shipping agent, a returns agent) coordinated by a top-level agent that delegates subtasks. Which Bedrock capability supports this design?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Multi-agent collaboration, where a supervisor agent coordinates specialized collaborator agents</li><li><span class="l">B</span>Prompt caching across agents</li><li><span class="l">C</span>Cross-region inference profiles</li><li><span class="l">D</span>A single action group with many APIs and no delegation</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Bedrock multi-agent collaboration lets a supervisor agent delegate subtasks to specialized collaborator agents, matching the described design. A single action group has no delegation model, cross-region inference is about routing capacity, and prompt caching only reuses prefixes.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents-multi-agent-collaboration.html" target="_blank" rel="noopener">Amazon Bedrock — Multi-agent collaboration</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 52</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which components can be associated with an Amazon Bedrock Agent to extend its capabilities? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Action groups that let the agent call external APIs or Lambda functions</li><li><span class="l">B</span>A billing alarm that stops the agent when costs are high</li><li><span class="l">C</span>Knowledge bases that let the agent retrieve grounded information</li><li><span class="l">D</span>An IAM group of human reviewers</li><li><span class="l">E</span>A CloudFront distribution that caches agent responses</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A, C</div>Agents are extended with action groups (to perform operations) and knowledge bases (to retrieve grounded data). Billing alarms, CloudFront distributions, and IAM groups of reviewers are not agent capability components.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html" target="_blank" rel="noopener">Amazon Bedrock — Agents</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 53</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">A developer wants an agent to define tool schemas using function definitions (name, description, parameters) rather than authoring a full OpenAPI document. Which agent capability supports this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Defining tools inside a guardrail policy</li><li><span class="l">B</span>Only OpenAPI schemas are ever allowed for action groups</li><li><span class="l">C</span>Storing tool definitions in the vector index</li><li><span class="l">D</span>Defining action group functions with a function-schema (function details) instead of an OpenAPI schema</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Bedrock action groups can be defined either with an OpenAPI schema or with function definitions (function details) specifying name, description, and parameters. It is not OpenAPI-only, guardrails do not define tools, and vector indexes store embeddings, not tool schemas.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents-action-create.html" target="_blank" rel="noopener">Amazon Bedrock — Agent action groups</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 54</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">A team wants an agent's action group to hand back the requested action and parameters to their own application to execute (instead of Bedrock invoking a Lambda directly), because the logic runs in an existing microservice. Which option supports this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Enable Provisioned Throughput to call the microservice</li><li><span class="l">B</span>Action groups can only invoke Lambda and never return control</li><li><span class="l">C</span>Configure the action group to return control to the application, which then executes the action</li><li><span class="l">D</span>Use a Knowledge Base sync to run the microservice</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Action groups can be configured to return control, passing the chosen action and parameters back to the calling application to execute in its own environment. It is not restricted to Lambda-only, KB syncs index data, and Provisioned Throughput reserves capacity, neither invoking a microservice.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents-action-create.html" target="_blank" rel="noopener">Amazon Bedrock — Agent action groups</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 55</span>
+<span class="badge cat">Bedrock Agents &amp; Tool Use</span></div>
+<div class="qtext">An agent should answer general product questions from company documents AND perform transactional actions like creating a ticket. Which combination should be attached to the agent?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>A single embedding model that both answers and creates tickets</li><li><span class="l">B</span>Two inference profiles, one per task</li><li><span class="l">C</span>A knowledge base for the document Q&amp;A plus an action group for the ticket-creation API</li><li><span class="l">D</span>Two guardrails, one for questions and one for actions</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Grounded document Q&amp;A comes from an attached knowledge base, while transactional operations come from an action group calling the ticket API, so both are attached to the agent. Guardrails enforce safety, inference profiles route traffic, and an embedding model only produces vectors.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html" target="_blank" rel="noopener">Amazon Bedrock — Agents</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 56</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A team wants to block harmful content categories (hate, violence, sexual, insults) in both user inputs and model outputs across any Bedrock model they use. Which feature and policy type addresses this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Guardrails for Amazon Bedrock content filters</li><li><span class="l">B</span>Prompt caching rules</li><li><span class="l">C</span>Cross-region inference filters</li><li><span class="l">D</span>IAM resource policies</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Guardrails content filters detect and block configurable harmful categories (hate, violence, sexual, insults, misconduct) on inputs and outputs, independent of the model. IAM controls access permissions, prompt caching reuses prefixes, and cross-region inference routes requests, none of which filter content categories.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrail policies</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 57</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A healthcare chatbot must never provide investment advice, regardless of how users phrase the request. Which guardrail policy most directly enforces this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>PII redaction</li><li><span class="l">B</span>Denied topics, defining 'investment advice' as a disallowed topic</li><li><span class="l">C</span>Contextual grounding checks</li><li><span class="l">D</span>A word filter listing every possible finance word</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Denied topics let you define a subject (like investment advice) in natural language that the guardrail then blocks regardless of phrasing. A word filter is brittle and cannot cover all phrasings, contextual grounding targets hallucination, and PII redaction protects personal data, not topic scope.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrail policies</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 58</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A RAG assistant sometimes produces answers that are not supported by the retrieved passages. The team wants Bedrock to detect and block responses that are not grounded in the provided source or not relevant to the query. Which guardrail capability fits?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Managed word filters</li><li><span class="l">B</span>Model invocation logging</li><li><span class="l">C</span>Contextual grounding checks (grounding and relevance thresholds)</li><li><span class="l">D</span>Denied topics</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Guardrail contextual grounding checks score whether a response is grounded in the provided context and relevant to the query, blocking ungrounded or irrelevant answers to reduce hallucination. Denied topics and word filters restrict subjects/words, and invocation logging only records requests.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html" target="_blank" rel="noopener">Amazon Bedrock — Contextual grounding check</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 59</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A team must ensure that personally identifiable information such as email addresses and phone numbers in model inputs or outputs is masked or blocked. Which guardrail policy handles this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Sensitive information filters that detect and redact or block PII</li><li><span class="l">B</span>Contextual grounding checks</li><li><span class="l">C</span>Denied topics</li><li><span class="l">D</span>Cross-region inference</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Guardrail sensitive information (PII) filters detect entities like emails and phone numbers and can mask/redact or block them. Denied topics restrict subjects, contextual grounding targets hallucination, and cross-region inference is about routing.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrail policies</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 60</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which policy types can be configured within a single Guardrail for Amazon Bedrock? (Select THREE.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Provisioned Throughput commitments</li><li><span class="l">B</span>Vector index shard settings</li><li><span class="l">C</span>S3 lifecycle rules</li><li><span class="l">D</span>Content filters for harmful categories</li><li><span class="l">E</span>Denied topics defined in natural language</li><li><span class="l">F</span>Sensitive information (PII) filters</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D, E, F</div>A Guardrail can combine content filters, denied topics, and sensitive information (PII) filters (plus word filters and grounding checks). Provisioned Throughput, vector index shards, and S3 lifecycle rules are unrelated infrastructure/storage settings, not guardrail policies.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrail policies</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 61</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A company wants to apply the same guardrail consistently whether they call the model via Converse, InvokeModel, a Knowledge Base, or an Agent. What is true about Bedrock Guardrails?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Guardrails only work with a single hardcoded model and cannot be reused</li><li><span class="l">B</span>Guardrails apply only to embedding models</li><li><span class="l">C</span>Guardrails must be re-created separately for every API call</li><li><span class="l">D</span>A guardrail is a reusable resource that can be applied across model invocations, knowledge bases, and agents</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Guardrails are standalone, reusable, versioned resources that can be attached across different invocation paths including Converse/InvokeModel, knowledge bases, and agents. They are not tied to one hardcoded model, do not require re-creation per call, and are not limited to embedding models.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrails</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 62</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">During testing, a guardrail correctly blocks a disallowed request. What does Bedrock return so the application can respond gracefully to the user?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>The full unfiltered model output anyway</li><li><span class="l">B</span>A configurable blocked message (guardrail intervention) indicating the content was blocked</li><li><span class="l">C</span>A billing error</li><li><span class="l">D</span>A silent empty 200 response with no indication</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>When a guardrail intervenes, Bedrock returns a configurable blocked-message response indicating the intervention, which the app can surface to users. It does not silently return empty content, does not pass through the unfiltered output, and does not raise a billing error.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrails</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 63</span>
+<span class="badge cat">Responsible AI &amp; Guardrails</span></div>
+<div class="qtext">A team wants to prevent users from using specific competitor names and profanity in prompts to their assistant. Which guardrail policy is the most direct fit?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>An inference profile</li><li><span class="l">B</span>Sensitive information filters</li><li><span class="l">C</span>Word filters, including custom word/phrase lists and managed profanity filtering</li><li><span class="l">D</span>Contextual grounding checks</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Guardrail word filters support custom word/phrase lists (e.g., competitor names) and a managed profanity filter, directly matching this need. Contextual grounding targets hallucination, sensitive information filters handle PII, and inference profiles route traffic.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html" target="_blank" rel="noopener">Amazon Bedrock — Guardrail policies</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 64</span>
+<span class="badge cat">SageMaker for Generative AI</span></div>
+<div class="qtext">A data science team wants to browse, evaluate, and deploy open and proprietary foundation models with pre-built notebooks and one-click deployment to endpoints they control. Which service capability provides this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Amazon Bedrock Guardrails</li><li><span class="l">B</span>AWS Glue DataBrew</li><li><span class="l">C</span>Amazon SageMaker JumpStart</li><li><span class="l">D</span>Amazon Bedrock Knowledge Bases</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>SageMaker JumpStart offers a hub of foundation and pre-trained models with example notebooks and one-click deployment to SageMaker endpoints. Bedrock Knowledge Bases handle RAG, Glue DataBrew is data prep, and Guardrails enforce safety, none of which is a model hub with deployable endpoints.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 65</span>
+<span class="badge cat">SageMaker for Generative AI</span></div>
+<div class="qtext">When would a team prefer deploying a foundation model on Amazon SageMaker rather than consuming it through Amazon Bedrock?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>When they only want reusable guardrail resources</li><li><span class="l">B</span>When they need full control over the model artifact, instance types, and custom inference containers on managed endpoints</li><li><span class="l">C</span>When they want zero infrastructure to manage and a fully serverless multi-model API</li><li><span class="l">D</span>When they need a managed RAG pipeline with citations out of the box</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>SageMaker suits teams needing control over the model artifact, instance selection, and custom inference containers on endpoints they manage. A serverless multi-model API and managed RAG with citations describe Bedrock, and reusable guardrails are a Bedrock feature.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 66</span>
+<span class="badge cat">SageMaker for Generative AI</span></div>
+<div class="qtext">A team deployed a JumpStart LLM to a real-time SageMaker endpoint but experiences idle cost during long periods of no traffic, though occasional latency spikes are acceptable. Which endpoint option can reduce cost during idle periods?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Move the model into a Bedrock Knowledge Base</li><li><span class="l">B</span>Provision the largest GPU instance permanently</li><li><span class="l">C</span>Use a SageMaker endpoint configuration that scales to zero / serverless or auto scaling to avoid paying for constant idle instances</li><li><span class="l">D</span>Disable model access in Bedrock</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>SageMaker offers auto scaling and serverless/scale-to-zero style options that reduce cost during idle periods when occasional cold-start latency is tolerable. A permanent large GPU maximizes idle cost, a Knowledge Base is unrelated, and disabling Bedrock model access does not affect a SageMaker endpoint.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 67</span>
+<span class="badge cat">SageMaker for Generative AI</span></div>
+<div class="qtext">A team wants to fine-tune an open-source LLM available in SageMaker JumpStart on their own dataset and retain the resulting model artifact. Which statement is accurate?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>JumpStart supports fine-tuning supported models on your dataset and produces a deployable model artifact you control</li><li><span class="l">B</span>JumpStart only allows inference and never fine-tuning</li><li><span class="l">C</span>JumpStart models cannot be deployed to endpoints</li><li><span class="l">D</span>Fine-tuning in JumpStart requires Bedrock Provisioned Throughput</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Many JumpStart foundation models support fine-tuning on your own data, yielding a deployable artifact you own and host on SageMaker endpoints. JumpStart is not inference-only, it does not depend on Bedrock Provisioned Throughput, and its models are deployable to endpoints.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 68</span>
+<span class="badge cat">SageMaker for Generative AI</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which are valid reasons a generative AI team might choose Amazon SageMaker over Amazon Bedrock for a given workload? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>They want a fully managed, serverless single API with no endpoints to operate</li><li><span class="l">B</span>They want a managed RAG pipeline with built-in citations and no vector store setup</li><li><span class="l">C</span>They require a specific open-source model not offered in Bedrock and want to host it themselves</li><li><span class="l">D</span>They want Bedrock Guardrails as reusable resources without any infrastructure</li><li><span class="l">E</span>They need fine-grained control over inference containers, instance types, and scaling behavior</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C, E</div>SageMaker is appropriate when you need to host a specific model yourself or require fine-grained control over containers, instances, and scaling. A serverless no-endpoint API, reusable Guardrails, and managed RAG with citations are Bedrock strengths, not reasons to pick SageMaker.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 69</span>
+<span class="badge cat">SageMaker for Generative AI</span></div>
+<div class="qtext">A team needs an integrated environment to develop, experiment with, and operationalize generative AI models, including notebooks and MLOps tooling around JumpStart models. Which environment is designed for this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>AWS Cost Explorer</li><li><span class="l">B</span>Amazon Bedrock console only</li><li><span class="l">C</span>Amazon QuickSight</li><li><span class="l">D</span>Amazon SageMaker Studio (with JumpStart integration)</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>SageMaker Studio provides the integrated IDE with notebooks, experimentation, and MLOps tooling, with JumpStart accessible inside it. The Bedrock console targets managed FM consumption, QuickSight is BI, and Cost Explorer is billing analysis.<div class="src">Source: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models.html" target="_blank" rel="noopener">SageMaker JumpStart — Foundation models</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 70</span>
+<span class="badge cat">Security, Cost &amp; Operations</span></div>
+<div class="qtext">A security team requires that all traffic between their VPC-based application and Amazon Bedrock stay on the AWS network and never traverse the public internet. Which capability should they configure?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>A public NAT gateway with an allow-list</li><li><span class="l">B</span>Cross-region inference profiles</li><li><span class="l">C</span>Interface VPC endpoints (AWS PrivateLink) for Amazon Bedrock</li><li><span class="l">D</span>Prompt caching</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C</div>Interface VPC endpoints powered by AWS PrivateLink let applications reach Bedrock privately over the AWS network without internet exposure. A NAT gateway still uses public routing, and cross-region inference and prompt caching address capacity and latency, not private connectivity.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/usingVPC.html" target="_blank" rel="noopener">Amazon Bedrock — Interface VPC endpoints (PrivateLink)</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 71</span>
+<span class="badge cat">Security, Cost &amp; Operations</span></div>
+<div class="qtext">An auditor requires a record of every model invocation, including request and response data, delivered to Amazon S3 and Amazon CloudWatch Logs. Which Bedrock feature provides this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Guardrails contextual grounding</li><li><span class="l">B</span>Model invocation logging</li><li><span class="l">C</span>Prompt management versioning</li><li><span class="l">D</span>Provisioned Throughput reporting</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Model invocation logging captures request and response data (and metadata) and can deliver it to S3 and CloudWatch Logs for audit. Contextual grounding is a safety check, Provisioned Throughput reporting covers capacity, and prompt versioning tracks templates, not invocations.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html" target="_blank" rel="noopener">Amazon Bedrock — Model invocation logging</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 72</span>
+<span class="badge cat">Security, Cost &amp; Operations</span></div>
+<div class="qtext">A company must encrypt its Bedrock custom model artifacts and other stored assets using keys they manage and can audit. Which approach should they use?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Rely solely on the model provider's keys</li><li><span class="l">B</span>Configure encryption with a customer managed AWS KMS key (CMK)</li><li><span class="l">C</span>Disable encryption to reduce latency</li><li><span class="l">D</span>Store artifacts in a public S3 bucket</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: B</div>Bedrock supports encryption using AWS KMS, including customer managed keys that provide control and auditability over key usage. Disabling encryption is insecure, provider keys do not give the customer control, and public storage violates confidentiality.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/encryption.html" target="_blank" rel="noopener">Amazon Bedrock — Encryption</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 73</span>
+<span class="badge cat">Security, Cost &amp; Operations</span></div>
+<div class="qtext">A platform team must grant a microservice permission to invoke only a specific Bedrock model and nothing else, following least privilege. Which mechanism enforces this?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>A VPC security group rule listing the model name</li><li><span class="l">B</span>A prompt template restriction</li><li><span class="l">C</span>A guardrail denied-topics policy</li><li><span class="l">D</span>An IAM policy scoped to the bedrock:InvokeModel action on that model's resource ARN</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: D</div>Least-privilege access to Bedrock is enforced with IAM identity/resource policies scoped to specific actions (e.g., bedrock:InvokeModel) and model resource ARNs. Guardrails filter content, security groups control network ports/CIDRs (not model ARNs), and prompt templates do not enforce authorization.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html" target="_blank" rel="noopener">Amazon Bedrock — Identity and access management</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 74</span>
+<span class="badge cat">Security, Cost &amp; Operations</span><span class="badge multi">Select multiple</span></div>
+<div class="qtext">Which strategies can help reduce Amazon Bedrock inference costs for a production workload? (Select TWO.)</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Add more VPC interface endpoints to lower token costs</li><li><span class="l">B</span>Increase temperature to shorten responses</li><li><span class="l">C</span>Use batch inference for large latency-tolerant jobs to benefit from lower pricing</li><li><span class="l">D</span>Always use the largest available model for every request</li><li><span class="l">E</span>Enable prompt caching to avoid reprocessing repeated prompt prefixes</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: C, E</div>Batch inference offers reduced pricing for large asynchronous jobs, and prompt caching avoids paying to reprocess repeated prefixes, both lowering cost. Using the largest model everywhere raises cost, VPC endpoints do not change token pricing, and temperature does not control cost.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html" target="_blank" rel="noopener">Amazon Bedrock — Batch inference</a></div></div>
+</details></div>
+<div class="q"><div class="head"><span class="num">Question 75</span>
+<span class="badge cat">Security, Cost &amp; Operations</span></div>
+<div class="qtext">An operations team needs to monitor Bedrock usage metrics such as invocation counts, latency, and token counts, and set alarms for anomalies. Which AWS service surfaces these metrics for Bedrock?</div>
+<ol class="opts" style="list-style:none"><li><span class="l">A</span>Amazon CloudWatch metrics for Amazon Bedrock</li><li><span class="l">B</span>Amazon Bedrock Guardrails dashboards</li><li><span class="l">C</span>AWS Trusted Advisor cost checks</li><li><span class="l">D</span>AWS Config rules only</li></ol>
+<details><summary>Show answer & explanation</summary>
+<div class="ans"><div class="correctline">Correct answer: A</div>Bedrock publishes operational metrics (invocations, latency, token counts) to Amazon CloudWatch, where teams can build dashboards and alarms. AWS Config tracks configuration compliance, Guardrails enforce safety policies, and Trusted Advisor gives best-practice checks, not real-time invocation metrics.<div class="src">Source: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html" target="_blank" rel="noopener">Amazon Bedrock — Model invocation logging</a></div></div>
+</details></div></div>
+<footer>Original AIP-C01 practice questions by Ghalib Ahmad. Answer sources link to official AWS documentation (docs.aws.amazon.com). Not affiliated with or endorsed by AWS.</footer>
+</body></html>

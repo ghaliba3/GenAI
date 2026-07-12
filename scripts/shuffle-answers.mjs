@@ -1,7 +1,7 @@
 // Shuffle each question's options and remap correct indices so the correct
 // answer isn't always option A. Asserts the correct-answer TEXT is preserved.
 import { readFileSync, writeFileSync } from "node:fs";
-const p = "data/test-1.json";
+const p = process.argv[2] || "data/test-1.json";
 const q = JSON.parse(readFileSync(p, "utf8"));
 
 function shuffle(n) {

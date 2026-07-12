@@ -1,0 +1,1235 @@
+[
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "A latency-sensitive voice assistant must begin speaking the model's answer as soon as possible to minimize perceived response time, while still using the model-agnostic message interface. Which Bedrock runtime call is the BEST fit?",
+    "options": [
+      "ConverseStream, to receive incremental output as it is generated",
+      "CreateModelInvocationJob with near-real-time polling of the S3 output",
+      "Converse, then chunk the full text client-side for playback",
+      "InvokeModel with a reduced max token setting to force a faster full response"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "ConverseStream returns tokens incrementally through the unified Converse interface, letting the assistant start playback before generation completes, minimizing time-to-first-token. Converse returns only the complete response, reducing max tokens still waits for the full body, and batch inference is asynchronous and unsuitable for real-time voice.",
+    "sourceKey": "converse-api"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "A company wants to use a cross-region inference profile for Anthropic Claude to improve burst capacity. During an IAM review, the security team asks which permissions the calling principal needs. What is correct about invoking through a cross-region inference profile?",
+    "options": [
+      "Cross-region inference requires no IAM changes because routing is performed by an AWS-managed service role",
+      "The principal must assume a role in each destination region before each invocation",
+      "Only InvokeModel on the single primary-region model ARN is required; the profile handles all other permissions implicitly",
+      "The principal needs InvokeModel permission for the inference profile ARN and for the underlying foundation model ARNs in each region the profile can route to"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "When invoking a cross-region inference profile, the IAM policy must allow the action on the inference profile resource as well as on the foundation model resources in the regions the profile can route to. Permitting only the primary-region model ARN will cause access-denied errors when Bedrock routes to another region, and there is no implicit waiver or per-call role assumption.",
+    "sourceKey": "cross-region-inference"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "A data team submits a batch inference job with CreateModelInvocationJob and finds it stuck in a validation/failed state immediately. The most common cause in their case is the input file. Which requirement MUST the input satisfy for a Bedrock batch job?",
+    "options": [
+      "It must be JSONL in Amazon S3, with each line a record whose modelInput matches the target model's expected request body, and meet the job's minimum record count",
+      "It must be CSV with one prompt per row stored in an EFS volume",
+      "It must be plaintext prompts concatenated into one file with newline separators only",
+      "It must be a single JSON array uploaded to a DynamoDB table referenced by ARN"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Bedrock batch inference reads JSONL from S3 where each line contains a recordId and a modelInput conforming to the chosen model's request schema, and jobs must meet a minimum number of records. DynamoDB, EFS, CSV, and undelimited plaintext are not valid input sources or formats for CreateModelInvocationJob.",
+    "sourceKey": "batch-inference"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "multi",
+    "question": "A platform team is standardizing on the Converse API but still has legacy code paths that call InvokeModel directly. They want to document the practical differences so engineers choose correctly. Which two statements accurately describe trade-offs between Converse and InvokeModel? (Select TWO.)",
+    "options": [
+      "Converse cannot be used with cross-region inference profiles, whereas InvokeModel can",
+      "Converse provides a unified message and inference-parameter structure across models, while InvokeModel requires model-specific request/response bodies",
+      "InvokeModel automatically normalizes all provider responses into a single content schema",
+      "InvokeModel is the only runtime operation that supports streaming output",
+      "Converse natively supports multi-turn message arrays and tool use through a single consistent schema"
+    ],
+    "correct": [
+      1,
+      4
+    ],
+    "explanation": "Converse abstracts away provider-specific bodies with one message/parameter schema and natively models multi-turn conversations and tool use, which is its core advantage over InvokeModel. Both APIs have streaming variants and both work with inference profiles, and it is Converse (not InvokeModel) that normalizes responses across providers.",
+    "sourceKey": "converse-api"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "An application using ConverseStream must accumulate the full assistant message for storage after streaming it to the user. The developer wants to do this with minimal custom parsing. What is the BEST approach with the streaming response?",
+    "options": [
+      "Process the stream's contentBlockDelta events to append text, and read the final messageStop and metadata events for stop reason and token usage",
+      "Concatenate the raw bytes of every event payload and store them verbatim as the message",
+      "Rely on the first chunk only, since ConverseStream sends the entire message in the initial event",
+      "Ignore the deltas and issue a second non-streaming Converse call to retrieve the complete message"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "ConverseStream emits structured events including contentBlockDelta for incremental text and a terminating messageStop plus metadata carrying stopReason and usage, which together reconstruct the full message and its metadata. Issuing a second call doubles cost, concatenating raw event bytes stores framing artifacts, and the message is not delivered whole in the first chunk.",
+    "sourceKey": "converse-api"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "A healthcare company requires that Bedrock runtime traffic never traverse the public internet and stays within their VPC for compliance. They invoke models from private subnets with no internet gateway. What is the correct way to enable connectivity to the Bedrock runtime?",
+    "options": [
+      "Peer the VPC with an AWS-managed Bedrock VPC to route traffic privately",
+      "Create an interface VPC endpoint (AWS PrivateLink) for the bedrock-runtime service and call it from the private subnets",
+      "Use a gateway VPC endpoint, the same type used for Amazon S3, for the Bedrock runtime",
+      "Attach a NAT gateway so the private subnets can reach the public Bedrock endpoint securely"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Bedrock runtime is reachable privately via an interface VPC endpoint powered by AWS PrivateLink, keeping traffic on the AWS network without an internet gateway. A NAT gateway still routes to the public endpoint over the internet, Bedrock does not offer a gateway endpoint (those are limited to S3 and DynamoDB), and there is no customer VPC peering construct for Bedrock.",
+    "sourceKey": "usingVPC"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "A team needs deterministic, repeatable outputs for a regression test suite that calls a model through the Converse API. They want to constrain randomness using the unified inference configuration. Which Converse field should they set, and what is the realistic expectation?",
+    "options": [
+      "Set inferenceConfig.maxTokens to 1 so the model cannot vary its output",
+      "Set inferenceConfig.temperature to a low value (for example 0); outputs become more deterministic but exact reproducibility is not guaranteed",
+      "Set inferenceConfig.seed to a fixed integer, which guarantees byte-identical outputs on every call",
+      "Set a stopSequence equal to the expected answer so the model always returns it"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Lowering temperature via inferenceConfig reduces output variability and is the supported knob for more deterministic generations, though Bedrock does not promise byte-for-byte reproducibility. A universal seed parameter is not guaranteed across all Converse models, capping maxTokens at 1 just truncates output, and a stop sequence does not force a specific answer.",
+    "sourceKey": "converse-api"
+  },
+  {
+    "category": "Amazon Bedrock Fundamentals",
+    "type": "single",
+    "question": "An analytics team wants to invoke an Amazon Bedrock model from an AWS Lambda function. Reviewers note the function imports a heavyweight third-party HTTP client to sign requests manually. What is the MOST operationally efficient recommendation?",
+    "options": [
+      "Embed long-term IAM access keys in the function environment to simplify signing",
+      "Use the AWS SDK's bedrock-runtime client, which handles SigV4 signing and retries via the function's IAM execution role",
+      "Call the Bedrock REST endpoint with unsigned requests since Lambda is inside AWS",
+      "Keep the manual signing code but cache the SigV4 signature across invocations to save time"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "The AWS SDK's bedrock-runtime client performs SigV4 signing and retry handling automatically using the Lambda execution role's temporary credentials, removing the need for any custom signing code. Caching signatures is incorrect (they are request-specific), Bedrock requires authenticated signed requests, and embedding static keys is a security anti-pattern when a role is available.",
+    "sourceKey": "inference"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "A company has both a customer-facing chat agent and a backend batch process that needs the same tool logic. They want to avoid duplicating Lambda business logic and keep a single source of truth. What is the best structure?",
+    "options": [
+      "Copy the Lambda code into a second function dedicated to the agent so the two paths stay independent",
+      "Implement the business logic in a shared Lambda (or shared library/layer) and have the action group invoke it, while the batch process invokes the same Lambda directly",
+      "Move the logic into the agent instruction prompt so both the chat and batch paths read it",
+      "Have the batch process call InvokeAgent for every record to reuse the agent's logic"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Centralizing the logic in a shared Lambda or library and invoking it from both the action group and the batch job keeps one source of truth and avoids drift. Copying code duplicates maintenance, prompts cannot hold executable logic, and routing batch records through InvokeAgent adds unnecessary LLM cost and latency.",
+    "sourceKey": "agents-action-create"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "multi",
+    "question": "A team is deciding when to use Bedrock Agents versus orchestrating tool use themselves with the Converse API. Which statements are accurate considerations? (Select TWO.)",
+    "options": [
+      "Bedrock Agents provide managed ReAct orchestration, action groups, sessions/memory, and Knowledge Base integration out of the box, reducing custom code",
+      "The Converse API gives the application full control of the orchestration loop, which is preferable when you need custom routing, state handling, or to embed tool use in existing services",
+      "Bedrock Agents cannot integrate Knowledge Bases, so you must use Converse for RAG",
+      "Bedrock Agents bypass IAM, so they need no permissions configuration",
+      "The Converse API cannot perform any tool use, so agents are mandatory for tools"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Agents offer managed orchestration plus built-in sessions, memory, and KB integration, while Converse gives you full control of the loop for custom needs. Converse does support tool use, Agents do integrate Knowledge Bases, and Agents absolutely require IAM configuration.",
+    "sourceKey": "agents"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "A multi-agent collaboration setup has a supervisor that routes to collaborator agents. The team observes the supervisor sometimes answering directly instead of delegating to the correct specialist. What is the most effective way to improve routing fidelity?",
+    "options": [
+      "Remove the supervisor and let the user manually pick an agent each time",
+      "Give every collaborator identical instructions so any of them can handle anything",
+      "Increase the supervisor model's temperature to encourage delegation",
+      "Provide clear collaborator descriptions/instructions stating each specialist's scope so the supervisor can match subtasks accurately"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Routing quality in multi-agent collaboration depends heavily on precise collaborator descriptions/instructions that define each agent's scope, which the supervisor uses to delegate. Higher temperature adds randomness, identical instructions defeat specialization, and removing the supervisor abandons the orchestration goal.",
+    "sourceKey": "agents-multi-agent"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "An agent must invoke an internal microservice that already exposes a well-documented REST API behind API Gateway, and the team wants to minimize new code. Which action-group approach best leverages the existing contract?",
+    "options": [
+      "Recreate every endpoint's logic inside a new Lambda so the agent never touches API Gateway",
+      "Move the microservice's data into a Knowledge Base instead of calling the API",
+      "Skip the action group and tell the agent the API URL in its instruction so it calls the endpoint directly over HTTP",
+      "Define the action group with an OpenAPI schema that mirrors the existing API and use a thin Lambda (or return of control) to forward requests to API Gateway"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Reusing the existing API's OpenAPI contract and forwarding through a thin integration layer minimizes new code and keeps one source of truth. Reimplementing endpoints duplicates logic, agents cannot call arbitrary URLs directly from an instruction, and replacing a live API with a KB loses transactional behavior.",
+    "sourceKey": "agents-action-create"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "During load testing, the action-group Lambda intermittently fails with cold-start latency spikes that push some agent turns past acceptable response times. The team needs predictable tool latency. What is the most appropriate mitigation?",
+    "options": [
+      "Configure provisioned concurrency on the action-group Lambda to eliminate cold starts for the expected traffic",
+      "Increase the agent's max iterations so slow turns are retried",
+      "Move the Lambda to a smaller memory size to start faster",
+      "Disable the agent trace to shave milliseconds off each turn"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Provisioned concurrency keeps initialized execution environments warm, directly eliminating cold-start latency for the provisioned level. More iterations add latency rather than remove it, smaller memory typically slows execution, and trace settings do not address cold starts.",
+    "sourceKey": "agents-action-create"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "A team wants automated, repeatable deployment of an agent (including action groups, prompts, aliases) across dev, staging, and prod accounts, with versioning and rollback. Which approach best fits AWS best practices?",
+    "options": [
+      "Manually click-configure each environment in the Bedrock console and screenshot the settings for records",
+      "Share one agent across all three accounts and toggle behavior with environment flags in the prompt",
+      "Define the agent and its resources as infrastructure as code (e.g., CloudFormation/CDK) and promote immutable versions through environments, repointing aliases per stage",
+      "Export the DRAFT version and email it to each environment owner to import"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "IaC plus immutable versions and per-environment aliases delivers repeatable, auditable promotion and clean rollback across accounts. Manual console configuration is error-prone and unrepeatable, a single shared agent breaks environment isolation, and emailing exports has no versioning or governance.",
+    "sourceKey": "agents"
+  },
+  {
+    "category": "Bedrock Agents & Tool Use",
+    "type": "single",
+    "question": "An agent must call a tool that returns a large dataset (tens of MB), but only a small summary is needed for the model to reason. Passing the full payload back inflates token usage and risks exceeding limits. What is the best design?",
+    "options": [
+      "Increase the model's max tokens until the full payload fits",
+      "Return the entire dataset to the model and rely on it to ignore the irrelevant parts",
+      "Truncate the dataset to the first few kilobytes regardless of which records matter",
+      "Have the action group store the full result in S3 and return only a concise summary plus a reference (e.g., S3 URI) the application can use later"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Returning a summary plus an out-of-band reference keeps the model's context small and within limits while preserving access to the full data via S3. Returning everything wastes tokens and may exceed limits, blind truncation can drop the relevant records, and inflating max tokens still bloats cost and context.",
+    "sourceKey": "agents-action-create"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A RAG pipeline retrieves the top 100 candidates from an OpenSearch vector index but answer quality is poor because the most relevant passage is often ranked 20th. The team cannot retrain the embedding model. What is the most effective improvement?",
+    "options": [
+      "Raise the HNSW M parameter to 64 to densify the graph",
+      "Increase the embedding dimension count and re-embed everything",
+      "Switch the kNN metric from cosine to Euclidean",
+      "Add a reranking step (e.g., Cohere Rerank or Amazon Bedrock rerank) over the top 100 candidates before passing to the LLM"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "A cross-encoder reranker rescores the retrieved candidates with deeper query-document interaction, promoting the truly relevant passage above the noisier first-stage results. Changing dimensions, metric, or graph density tweaks recall slightly but does not address fine-grained ranking the way a reranker does.",
+    "sourceKey": "kb-how-it-works"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A multilingual support portal indexes documents in 15 languages and must match a query in one language to relevant content in another. Which embedding strategy on AWS best supports cross-lingual semantic retrieval?",
+    "options": [
+      "Use BM25 lexical search only, since it is language-agnostic",
+      "Translate everything to English with Amazon Translate, embed only English, and discard originals",
+      "Use Amazon Titan Text Embeddings V2 (multilingual) so queries and docs in different languages map into a shared semantic space",
+      "Train one separate single-language embedding model per language and keep 15 isolated indexes"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Titan Text Embeddings V2 supports many languages in a shared embedding space, so a query in one language retrieves semantically equivalent content in another without translation. Isolated per-language indexes break cross-lingual matching, BM25 cannot bridge languages semantically, and translate-then-embed adds latency and loses fidelity.",
+    "sourceKey": "titan-embedding"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "multi",
+    "question": "A team is deciding between HNSW and IVF index types for an OpenSearch/faiss vector index. Which statements correctly describe the trade-offs they should weigh? (Select TWO.)",
+    "options": [
+      "IVF always provides exact nearest-neighbor results with no recall loss",
+      "HNSW requires a pre-training phase over a sample before any inserts",
+      "IVF can use less memory and train faster but typically requires a representative training set and tuning of nlist/nprobe",
+      "HNSW generally offers higher recall and lower query latency but uses more memory",
+      "HNSW cannot support incremental inserts and must be rebuilt for every new vector"
+    ],
+    "correct": [
+      2,
+      3
+    ],
+    "explanation": "HNSW favors recall and latency at higher memory cost, while IVF trades some recall for lower memory but needs a training set and nlist/nprobe tuning. IVF is approximate (not exact), HNSW supports incremental inserts, and it is IVF (not HNSW) that requires a training phase.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A fraud-investigation team must traverse relationships among entities (accounts, devices, transactions) AND perform semantic similarity over entity descriptions to power a GraphRAG application. Which AWS service is purpose-built for combining graph traversal with vector similarity?",
+    "options": [
+      "Amazon OpenSearch Serverless vector engine alone",
+      "Amazon Aurora PostgreSQL with pgvector alone",
+      "Amazon MemoryDB vector search alone",
+      "Amazon Neptune Analytics with its integrated vector search capability"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Neptune Analytics combines fast graph analytics and traversal with built-in vector similarity search, making it the native choice for GraphRAG over connected entities. The other stores provide vector search but lack the integrated graph traversal needed for relationship-aware retrieval.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A company wants a fully managed enterprise search experience over SharePoint, S3, and Confluence with built-in connectors, document ACL enforcement, and natural-language answers, without building an embedding/indexing pipeline. Which service should they choose over a raw vector store?",
+    "options": [
+      "Amazon OpenSearch Serverless vector engine with custom ingestion code",
+      "Amazon Kendra, which provides managed connectors, ACL-aware retrieval, and semantic ranking out of the box",
+      "Amazon MemoryDB vector search with manual document chunking",
+      "Amazon Aurora pgvector with a custom crawler"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Kendra is a managed intelligent search service with native data-source connectors, document-level ACL enforcement, and semantic ranking, removing the need to build embedding and indexing pipelines. The vector-store options require building connectors, chunking, embedding, and access control manually.",
+    "sourceKey": "knowledge-base"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A legal compliance use case requires that nearest-neighbor results be guaranteed correct (no approximation error) over a small, slowly changing corpus of 200,000 vectors. Latency budget is generous. Which approach is most appropriate?",
+    "options": [
+      "Use S3 Vectors with default ANN settings",
+      "Use exact (brute-force) kNN, since at 200k vectors it returns guaranteed-correct neighbors within the latency budget",
+      "Use IVF with nprobe equal to nlist to force exactness",
+      "Use HNSW with a very high ef_search to approximate exact results closely enough"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "At 200k vectors with a generous latency budget, exact brute-force kNN guarantees correct neighbors, satisfying the compliance requirement deterministically. HNSW remains approximate regardless of ef_search, and IVF with nprobe=nlist scans all lists but is more complex than simply doing exact search at this modest scale.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "multi",
+    "question": "When tuning an HNSW index in OpenSearch for a recall-vs-cost target, which parameter changes will increase recall (at some cost)? (Select TWO.)",
+    "options": [
+      "Increasing ef_search at query time",
+      "Decreasing ef_construction during index build",
+      "Reducing the number of dimensions in the embeddings",
+      "Increasing M (max connections per node) at index build time",
+      "Lowering the number of segments by force-merging only"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "explanation": "Higher ef_search explores more candidates per query and higher M builds a denser graph, both raising recall at the cost of latency or memory. Decreasing ef_construction lowers build quality (and recall), and reducing dimensions tends to lose information, lowering recall.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "Embeddings & Vector Stores",
+    "type": "single",
+    "question": "A startup embeds documents with Amazon Titan Text Embeddings and stores them in pgvector. As the corpus grows past 10 million rows, IVFFlat query recall drifts down over time even though no parameters changed. What is the most likely cause and best fix?",
+    "options": [
+      "IVFFlat centroids no longer reflect the data distribution after heavy inserts; rebuild the index (or migrate to pgvector HNSW) to restore recall",
+      "PostgreSQL automatically lowers recall to save disk; disable autovacuum",
+      "Titan embeddings expire and must be regenerated weekly",
+      "Cosine distance becomes invalid above 10 million rows; switch to L2"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "IVFFlat clusters vectors around centroids computed at build time; as new data shifts the distribution, those centroids become stale and recall degrades until the index is rebuilt, or you move to pgvector's HNSW which adapts incrementally. Embeddings do not expire, the metric remains valid, and autovacuum does not control recall.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "single",
+    "question": "A document-processing pipeline needs to read scanned PDFs containing images of tables and handwritten notes, then output extracted text and structured JSON. The team wants a single Bedrock generative model to handle both vision and structured text output. Which model is most suitable?",
+    "options": [
+      "Cohere Command R (text only)",
+      "Mistral 7B Instruct (text only)",
+      "Amazon Titan Embeddings",
+      "Anthropic Claude 3.5 Sonnet (multimodal vision with strong structured output)"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Claude 3.5 Sonnet can ingest images of tables and handwriting and produce structured JSON output in a single call, matching both the vision and structured-output needs. The text-only models cannot interpret the scanned images, and Titan Embeddings produces vectors, not extracted text.",
+    "sourceKey": "models-supported"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "single",
+    "question": "A real-time voice assistant requires sub-second first-token latency and concise responses, with quality sufficient for everyday Q&A but not deep analysis. Cost matters at scale. Which model selection best matches the latency-first requirement?",
+    "options": [
+      "Stability AI SDXL for fast generation",
+      "Mistral Large for its reasoning depth",
+      "Claude 3 Opus for the best possible answers",
+      "Claude 3 Haiku for its low latency and low cost"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Claude 3 Haiku is optimized for low latency and low cost, making it well suited to a real-time voice assistant doing everyday Q&A at scale. Opus and Mistral Large add latency and cost in pursuit of reasoning depth that this use case does not require, and SDXL is an image model.",
+    "sourceKey": "models-supported"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "multi",
+    "question": "An enterprise is building a RAG system and must select both a generation model and an embeddings model on Bedrock. Which two selections form a coherent, cost-aware pairing for multilingual retrieval with strong grounded answers? (Select TWO.)",
+    "options": [
+      "Stability AI SDXL for the embeddings stage",
+      "An image model for both retrieval and generation",
+      "Claude 3.5 Sonnet or Cohere Command R+ for grounded, citable generation with tool use",
+      "Amazon Titan Image Generator for the generation stage",
+      "Cohere Embed Multilingual for the retrieval/embeddings stage"
+    ],
+    "correct": [
+      2,
+      4
+    ],
+    "explanation": "A coherent RAG stack pairs a strong multilingual embeddings model (Cohere Embed Multilingual) for retrieval with a capable, grounding-oriented generation model such as Claude 3.5 Sonnet or Cohere Command R+. Image-generation models like SDXL and Titan Image Generator cannot perform text embedding or grounded text generation.",
+    "sourceKey": "models-supported"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "single",
+    "question": "A team compares two text models on Bedrock: Model A has a 200K-token context window but higher per-token cost; Model B has a 32K context window at lower cost. The use case routinely processes 90K-token inputs that cannot be meaningfully chunked. Which model should be selected and why?",
+    "options": [
+      "Model B, by truncating inputs to 32K and discarding the rest",
+      "Model B, because lower per-token cost always wins",
+      "Either model, since context window does not affect correctness",
+      "Model A, because the 90K input exceeds Model B's context window and chunking is not viable"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Because the 90K-token inputs exceed Model B's 32K window and cannot be chunked, only Model A's 200K window can process them correctly, so its higher cost is justified by feasibility. Truncating to 32K would discard essential content, and context window directly determines whether the input can be handled at all.",
+    "sourceKey": "models-supported"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "single",
+    "question": "A company wants to fine-tune (customize) a foundation model on Bedrock using its own labeled data to improve domain performance, and prefers a model family that supports Bedrock fine-tuning. Which selection is appropriate?",
+    "options": [
+      "Choose Stability AI SDXL because image models are easiest to fine-tune for text tasks",
+      "Choose any model, since all Bedrock models support fine-tuning identically",
+      "Choose a Bedrock model that supports customization/fine-tuning, such as Amazon Titan Text or supported Meta Llama/Cohere models",
+      "Avoid fine-tuning entirely because it is never supported on Bedrock"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Bedrock supports fine-tuning/customization only for specific models, such as Amazon Titan Text and certain Meta Llama and Cohere models, so the selection must be one that supports customization. Not all models support fine-tuning, SDXL is an image model irrelevant to text tasks, and fine-tuning is in fact available for supported models.",
+    "sourceKey": "custom-models"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "single",
+    "question": "A high-throughput batch job must score and rewrite tens of millions of records overnight, where latency per request is irrelevant but total cost and aggregate throughput are critical. Which Bedrock approach is most appropriate?",
+    "options": [
+      "Use synchronous on-demand calls one at a time with Claude 3 Opus",
+      "Use Stability AI SDXL to process the text records",
+      "Use a real-time low-latency model tier even though latency does not matter",
+      "Use Bedrock batch inference with a right-sized, cost-efficient model to maximize throughput at lower cost"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "For large offline workloads where latency does not matter, Bedrock batch inference paired with a cost-efficient model maximizes aggregate throughput at lower cost than synchronous calls. Serial Opus calls are slow and expensive, optimizing for latency is wasteful here, and SDXL is an image model.",
+    "sourceKey": "batch-inference"
+  },
+  {
+    "category": "Foundation Model Selection",
+    "type": "multi",
+    "question": "An architect is finalizing model selection and must document the key decision factors for the review board. Which two factors are legitimately essential inputs to choosing a Bedrock foundation model for a given use case? (Select TWO.)",
+    "options": [
+      "Whether the use case needs multimodality (e.g., image input) that the candidate model supports",
+      "Required context-window size versus the model's maximum context length",
+      "The color scheme of the AWS Management Console",
+      "Whether the model was the first one ever released on Bedrock",
+      "The number of letters in the model's name"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Context-window requirements and multimodality needs are core technical inputs that determine whether a model can even handle the workload, alongside cost, latency, quality, licensing, and regional availability. The remaining options are irrelevant cosmetic or trivial attributes that have no bearing on fitness for the use case.",
+    "sourceKey": "models-supported"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "An organization needs to add proprietary, slowly changing internal knowledge to model responses while keeping inference latency minimal and avoiding per-call retrieval infrastructure. They have a large unlabeled corpus. Which approach trades off best for this requirement?",
+    "options": [
+      "Few-shot prompting with the entire corpus in the context window",
+      "RAG with a vector store queried on every request",
+      "Fine-tuning on a few dozen labeled examples",
+      "Continued pre-training to bake the domain knowledge into the model weights"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "When knowledge is large, unlabeled, and slowly changing, continued pre-training embeds it into the weights so no retrieval step is needed at inference, minimizing latency. RAG adds per-call retrieval latency and infrastructure, a few labeled examples are too sparse, and stuffing a large corpus into context is infeasible.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "multi",
+    "question": "A team is deciding between fine-tuning and RAG for a use case. Which scenarios genuinely favor fine-tuning over RAG? (Select TWO.)",
+    "options": [
+      "Answering questions about documents that are updated several times per day",
+      "Providing verifiable source citations for every factual claim",
+      "Reducing the number of model parameters to cut hosting cost",
+      "Teaching the model a specialized task behavior from many labeled examples",
+      "Enforcing a consistent brand tone, style, and output structure across responses"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "explanation": "Fine-tuning is best when you need to shape behavior, tone, style, or task performance using labeled examples, since that adjusts the model itself. Frequently changing data and source-citation needs favor RAG, and reducing parameter count is the goal of distillation, not fine-tuning.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "A team fine-tuned a Bedrock model and wants to objectively decide whether the custom model is better than the base model for their task before committing to Provisioned Throughput. Which step is MOST appropriate?",
+    "options": [
+      "Run a model evaluation comparing custom and base models on a held-out test set with task-relevant metrics",
+      "Pick the model that produced more tokens during validation",
+      "Compare the final training loss values reported by each job",
+      "Deploy both to Provisioned Throughput and compare production traffic for a month"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Evaluating both models on a held-out test set with metrics tied to the task gives an objective, low-cost comparison before paying for hosting. Provisioning both for a month is wasteful, training loss is not comparable across models, and token count is not a quality signal.",
+    "sourceKey": "model-evaluation"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "A team's fine-tuning dataset contains many duplicated, mislabeled, and inconsistent prompt-completion pairs. They are tempted to just add more epochs to compensate. What is the BEST course of action?",
+    "options": [
+      "Raise the learning rate to help the model overcome bad labels",
+      "Switch to continued pre-training because it tolerates noisy labels",
+      "Clean and de-duplicate the data and fix labels before training, prioritizing quality over volume",
+      "Increase epochs so the model sees the noisy data more times"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Fine-tuning quality is driven far more by clean, consistent, correctly labeled data than by volume, so cleaning and de-duplicating is the right first step. More epochs on noisy data amplifies the errors and overfits, and raising the learning rate or changing methods does not fix mislabeled targets.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "A regulated insurer must ensure that no customer data leaves its VPC during Bedrock fine-tuning, training data is encrypted with its own keys, and access is auditable. Which combination of measures supports these governance requirements?",
+    "options": [
+      "Make the S3 training bucket public so Bedrock can reach it reliably",
+      "Store JSONL in an encrypted S3 bucket with a customer-managed KMS key, access Bedrock via a VPC endpoint, and log API calls with CloudTrail",
+      "Disable encryption to speed up the training job and rely on IAM only",
+      "Email the JSONL files to AWS support to run the job on the insurer's behalf"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Encrypting training data in S3 with a customer-managed KMS key, reaching Bedrock through a VPC endpoint, and auditing with CloudTrail addresses encryption, network isolation, and auditability together. Disabling encryption or exposing the bucket publicly violates the governance requirements outright.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "multi",
+    "question": "A team is tuning hyperparameters for a Bedrock fine-tuning job to avoid overfitting on a small dataset. Which adjustments are reasonable mitigations? (Select TWO.)",
+    "options": [
+      "Remove the validation set so all data can be used for training",
+      "Set the learning rate to the largest value the service allows",
+      "Hold out a validation split to monitor for divergence between train and validation metrics",
+      "Maximize epochs to force the loss as close to zero as possible",
+      "Reduce the number of epochs so the model passes over the data fewer times"
+    ],
+    "correct": [
+      2,
+      4
+    ],
+    "explanation": "On a small dataset, fewer epochs and watching a held-out validation split are standard ways to detect and limit overfitting. Maximizing epochs to drive loss to zero, removing validation data, and using the largest learning rate all increase overfitting or hide it.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "A company has only about 50 labeled examples and a tight deadline. The base model already performs adequately with detailed instructions. They want better consistency without the cost and effort of training. What should they try FIRST?",
+    "options": [
+      "Prompt engineering with clear instructions and a few well-chosen examples",
+      "Fine-tuning on the 50 examples",
+      "Bedrock Model Distillation using the 50 examples",
+      "Continued pre-training on the 50 examples"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "With very few examples, a tight deadline, and an already-adequate base model, prompt engineering with few-shot examples is the fastest, cheapest path and often sufficient. Fifty examples are too few for reliable fine-tuning, continued pre-training needs large unlabeled corpora, and distillation requires a teacher and far more data.",
+    "sourceKey": "model-customization"
+  },
+  {
+    "category": "Model Customization & Fine-Tuning",
+    "type": "single",
+    "question": "A team wants to combine customization techniques. They have a fine-tuned model that reliably produces the right tone and format, but it occasionally states outdated facts about inventory. Which addition resolves the factual issue without retraining?",
+    "options": [
+      "Add RAG so the model retrieves current inventory data at inference time",
+      "Run continued pre-training every hour on inventory snapshots",
+      "Lower the temperature to zero to eliminate outdated facts",
+      "Increase the fine-tuning epochs to memorize inventory"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Combining a fine-tuned model with RAG lets the model keep its learned tone and format while grounding factual answers in current retrieved data, with no retraining. Hourly continued pre-training is impractical and costly, more epochs only memorize stale data, and temperature changes do not refresh facts.",
+    "sourceKey": "knowledge-base"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "single",
+    "question": "A workflow needs Claude to extract several fields and then, in a separate decision, choose one of three predefined actions. Cramming both into one prompt yields tangled outputs where extraction errors corrupt the action choice. Which prompt-engineering pattern best improves reliability?",
+    "options": [
+      "Prompt chaining: one call extracts the fields, a second call takes the validated fields and selects the action",
+      "Add more emphatic instructions in the single prompt to keep the steps separate",
+      "Reduce maxTokens so the model cannot conflate the two tasks",
+      "Raise temperature so the single prompt produces more varied attempts"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Decomposing into a chain—extract first, then decide on the validated output—isolates failure modes and lets each step be checked, which is the standard pattern for coupled multi-stage tasks. Temperature, emphasis, and maxTokens do not provide the structural separation and validation handoff that chaining does.",
+    "sourceKey": "prompt-management"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "single",
+    "question": "A team uses an LLM-as-judge prompt to score generated answers from 0-10 against a rubric. The judge's scores are noisy and vary run-to-run for identical inputs on a model where sampling is configurable. They want more stable, defensible scores. Which combination of changes is most appropriate?",
+    "options": [
+      "Lower the sampling randomness and have the judge reason against each rubric criterion before emitting a single structured score",
+      "Increase maxTokens only, leaving the prompt unchanged",
+      "Ask the judge for a one-word 'good' or 'bad' with no rubric",
+      "Raise temperature so the judge averages over more possibilities"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Reducing sampling randomness stabilizes the score, and requiring explicit per-criterion reasoning before a structured score makes judgments more consistent and auditable. Higher temperature increases noise, dropping the rubric removes the basis for defensible scoring, and more tokens alone does not address variance or rigor.",
+    "sourceKey": "model-evaluation"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "single",
+    "question": "A prompt that generates SQL appends \"; -- end\" to most queries because an early instruction example showed that pattern. The team removed the example but the behavior persists across requests. They suspect a stale prompt cache. Which check best confirms the cause?",
+    "options": [
+      "Increase maxTokens to ensure the prompt change is fully processed",
+      "Add a stop sequence on '--' to hide the comment in output",
+      "Inspect usage.cache_read_input_tokens across repeated requests to see whether an old cached prefix is being served",
+      "Lower temperature to see if the trailing comment disappears"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "If a stale prefix is being read from cache, cache_read_input_tokens will be nonzero on requests that should reflect the edited prompt, confirming the old content is still in play (any byte change to the prefix should have invalidated it). Temperature and maxTokens do not diagnose caching, and a stop sequence only masks the symptom.",
+    "sourceKey": "prompt-caching"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "single",
+    "question": "A team needs the model to translate user requests into a strict enum of intents and to NEVER invent a new intent label. With plain prompting the model occasionally outputs a near-synonym not in the allowed set. What most reliably enforces the constraint?",
+    "options": [
+      "Add a stop sequence after the first word the model outputs",
+      "Raise temperature so the model considers the full label set",
+      "Define the intent as a schema field with an explicit enum of allowed values using structured outputs or a strict tool schema",
+      "List the allowed intents in the prompt and add 'do not invent new ones'"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "An enum-constrained schema (structured outputs or strict: true on a tool) restricts the output to exactly the allowed labels, enforcing the constraint at the format level rather than by persuasion. A prose instruction is not a hard guarantee, higher temperature increases off-list risk, and a stop sequence does not constrain which word is chosen.",
+    "sourceKey": "tool-use"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "single",
+    "question": "An assistant should stop generating as soon as it finishes a single labeled section so the application can stream sections independently. The model keeps continuing into the next section. Which inference control is designed for this?",
+    "options": [
+      "Reduce topK so fewer tokens are considered after the section",
+      "Lower temperature so the model naturally stops sooner",
+      "Set a stop sequence matching the delimiter that marks the start of the next section",
+      "Set maxTokens to a guessed value that usually lands at the section boundary"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Stop sequences halt generation exactly when a specified string would be produced, which precisely cuts off at the next-section delimiter. Temperature and topK affect sampling, not where generation ends, and a guessed maxTokens cannot reliably align with a semantic boundary.",
+    "sourceKey": "inference"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "multi",
+    "question": "A team is moving prompts into Amazon Bedrock Prompt Management to support multiple environments and safe iteration. Which statements about effective use are correct? (Select TWO.)",
+    "options": [
+      "Prompts can be versioned so a known-good version is referenced in production while new variants are tested",
+      "Prompt Management automatically eliminates hallucinations regardless of prompt content",
+      "Prompt variables (placeholders) let the same managed prompt be reused with different runtime inputs",
+      "Storing a prompt in Prompt Management changes the model's sampling parameters by default",
+      "A managed prompt must embed the full user input as literal text and cannot use placeholders"
+    ],
+    "correct": [
+      0,
+      2
+    ],
+    "explanation": "Bedrock Prompt Management supports versioning (pin a stable version in production, test variants) and variable placeholders for reuse with different runtime inputs. It does not eliminate hallucinations on its own, does not alter sampling parameters by storing a prompt, and does support placeholders rather than requiring literal input.",
+    "sourceKey": "prompt-management"
+  },
+  {
+    "category": "Prompt Engineering",
+    "type": "multi",
+    "question": "After upgrading an interactive assistant to Claude Opus 4.8, users complain it pauses to ask permission for trivial choices (variable names, default values) and often ends a finished task with \"Want me to also...?\" The team wants to cut unnecessary asking while preserving caution on risky actions. Which prompt changes best achieve this? (Select TWO.)",
+    "options": [
+      "Tell the model to never ask any clarifying questions under any circumstances",
+      "Reduce maxTokens so the model has no room to append follow-up offers",
+      "Instruct the model to still ask first before scope changes or destructive actions",
+      "Instruct the model to pick a reasonable option and note it for minor, low-stakes choices rather than asking",
+      "Raise temperature so the model is less likely to pause and ask"
+    ],
+    "correct": [
+      2,
+      3
+    ],
+    "explanation": "Opus 4.8 is more deliberate and asks more often; granting explicit autonomy on minor choices while preserving the requirement to ask before scope changes or destructive actions calibrates the ask-rate correctly. Temperature does not govern asking behavior, a blanket no-questions rule removes needed caution on risky actions, and clipping maxTokens risks truncating real output.",
+    "sourceKey": "prompt-management"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "An enterprise wikis team adds 2,000 new pages weekly to the S3 bucket that backs a Bedrock Knowledge Base, and deletes obsolete pages. Answers must reflect added and removed content within hours without re-embedding the entire corpus each time. What is the BEST ingestion approach?",
+    "options": [
+      "Delete and recreate the Knowledge Base each week to guarantee freshness",
+      "Rely on the embedding model to automatically detect S3 changes in real time",
+      "Run incremental ingestion jobs (sync) so only new, changed, and deleted objects are processed",
+      "Run a full re-ingestion of all documents on every change"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Bedrock ingestion (sync) is incremental: it processes only objects that were added, modified, or removed since the last sync, keeping the index fresh efficiently. Recreating the KB or full re-ingestion reprocesses everything and is costly and slow, and the embedding model does not watch S3 on its own; ingestion must be triggered.",
+    "sourceKey": "kb-data-source"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "A knowledge base over technical manuals returns answers that are factually correct but miss the broader procedure surrounding a step, because each chunk is a single paragraph. The team wants retrieval to match on fine-grained chunks yet feed the model the larger surrounding context. Which chunking strategy BEST achieves this?",
+    "options": [
+      "Semantic chunking with a very low breakpoint threshold producing tiny chunks",
+      "Hierarchical chunking, retrieving on child chunks but returning the parent chunk to the model",
+      "Fixed-size 100-token chunking with zero overlap",
+      "No chunking, sending whole manuals to the model"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Hierarchical chunking indexes small child chunks for precise matching but returns the larger parent chunk to the model, giving both retrieval precision and surrounding context. Small fixed chunks lose context, sending whole manuals overruns context windows and dilutes relevance, and tiny semantic chunks reintroduce the very fragmentation the team is trying to avoid.",
+    "sourceKey": "kb-chunking-parsing"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "A company must decide between fine-tuning a model and using a Bedrock Knowledge Base for an assistant over an internal policy library that changes weekly and requires citing the exact source policy. Which approach BEST fits, and why?",
+    "options": [
+      "Fine-tuning, because it permanently embeds the policies into the model weights for fastest inference",
+      "Continued pre-training, because weekly policy edits are best learned through additional training epochs",
+      "Fine-tuning, because it guarantees the model can cite exact source documents",
+      "RAG with a Knowledge Base, because it keeps answers current as policies change and can cite specific source documents"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "RAG retrieves from an external, frequently updated corpus and returns citations, which directly matches weekly changes and source-attribution needs without retraining. Fine-tuning bakes knowledge into weights, so frequent changes require repeated retraining and it cannot natively cite source documents; continued pre-training is even more costly and unsuited to rapidly changing facts.",
+    "sourceKey": "knowledge-base"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "Users querying a Bedrock Knowledge Base of regional product documentation often get answers mixing regions because documents from EU and US describe similar products. Each document is tagged with a region attribute during ingestion. What is the BEST way to ensure a user in the EU only retrieves EU documents?",
+    "options": [
+      "Create one giant chunk per region so the model can tell them apart",
+      "Apply a metadata filter region = EU in the retrieval configuration of the query",
+      "Lower the embedding dimensionality to make regional documents more distinct",
+      "Increase numberOfResults so the correct region's documents are eventually included"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Metadata filtering restricts retrieval to documents whose region attribute matches EU, preventing cross-region contamination at query time. Giant per-region chunks harm relevance, retrieving more results still mixes regions, and embedding dimensionality changes do not enforce attribute constraints.",
+    "sourceKey": "kb-how-it-works"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "multi",
+    "question": "An architect is choosing a vector store for a Bedrock Knowledge Base that already runs an Aurora PostgreSQL database for the application and wants to avoid introducing a new datastore, keep costs predictable, and reuse existing operational tooling. Which TWO statements are accurate considerations? (Select TWO.)",
+    "options": [
+      "pgvector stores embeddings as JSON strings in a standard text column with no special index needed",
+      "Aurora with pgvector cannot be used by Bedrock Knowledge Bases and must be replaced by OpenSearch Serverless",
+      "Choosing Aurora pgvector forces the application database and vector index to share the same table schema as the app's business tables",
+      "Using pgvector requires creating a table with a vector column and an appropriate index (e.g., HNSW) before connecting it to the Knowledge Base",
+      "Aurora PostgreSQL with pgvector is a supported Knowledge Base vector store and lets them consolidate on an existing relational engine"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "explanation": "Aurora PostgreSQL/pgvector is a supported KB vector store, enabling consolidation, and it requires a prepared table with a vector column and a suitable index such as HNSW. It is not unsupported, embeddings are stored in vector-typed columns with vector indexes (not plain JSON text), and the vector table is separate from business tables rather than forced to share their schema.",
+    "sourceKey": "kb-vector-store"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "A high-traffic assistant uses RetrieveAndGenerate and the team finds p95 latency too high because the managed flow retrieves, builds the prompt, and generates in one call with a large model. They need to cut latency while keeping retrieval quality. Which change offers the BEST latency/quality trade-off?",
+    "options": [
+      "Switch from RetrieveAndGenerate to a workflow that re-embeds the entire corpus on each request",
+      "Disable retrieval and answer from the model's parametric knowledge",
+      "Increase numberOfResults so the model has more context and stops re-querying",
+      "Reduce numberOfResults to a tighter, reranked top-k so the model processes fewer tokens, and select a faster generation model"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Sending a smaller, reranked top-k reduces input tokens and generation work, and pairing it with a faster model lowers latency while reranking preserves the most relevant context. Disabling retrieval defeats RAG, more results increases tokens and latency, and re-embedding the corpus per request is enormously slow and unnecessary.",
+    "sourceKey": "kb-how-it-works"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "A team notices that for queries needing information spread across many documents (e.g., 'summarize all incidents in Q3'), their Bedrock Knowledge Base returns only a few top chunks and the summary misses several incidents. Retrieval precision is fine for single-fact questions. What is the MOST appropriate adjustment?",
+    "options": [
+      "Increase the numberOfResults (top-k) for these aggregation-style queries so more relevant chunks reach the model",
+      "Enable a guardrail to force the model to be more comprehensive",
+      "Decrease the chunk size to surface more distinct chunks automatically",
+      "Switch the embedding model to one with fewer dimensions"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Aggregation/summarization queries need broad coverage, so raising top-k brings more of the relevant incident chunks into context. Smaller chunks do not guarantee more of the relevant documents are retrieved, a lower-dimension embedding model can reduce retrieval quality, and guardrails enforce policy, not retrieval breadth.",
+    "sourceKey": "kb-how-it-works"
+  },
+  {
+    "category": "RAG & Knowledge Bases",
+    "type": "single",
+    "question": "A healthcare provider stores PHI documents in S3 and ingests them into a Bedrock Knowledge Base. Security requires that data at rest in the vector store be encrypted with a customer-managed key (CMK) and that ingestion not transit the public internet. Which configuration BEST satisfies this?",
+    "options": [
+      "Configure the vector store and KB with an AWS KMS customer-managed key and access Bedrock/data sources via VPC endpoints (PrivateLink)",
+      "Store the documents unencrypted but enable CloudTrail logging for access auditing",
+      "Rely on default AWS-owned encryption keys and public Bedrock endpoints since traffic is TLS-encrypted",
+      "Encrypt only the S3 source bucket and leave the vector store with default encryption"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Using a KMS customer-managed key for the vector store/KB satisfies the CMK requirement, and VPC endpoints (PrivateLink) keep traffic off the public internet. Default keys do not meet the CMK requirement, encrypting only the source bucket leaves the vector store inadequately protected, and CloudTrail auditing does not provide encryption.",
+    "sourceKey": "encryption"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "multi",
+    "question": "A risk team is documenting controls for hallucination in a Bedrock RAG assistant used for regulatory guidance. Which measures genuinely reduce or detect hallucination? (Select TWO.)",
+    "options": [
+      "Ground generation in retrieved, citable source passages and surface those citations to users",
+      "Increase the Prompt Attack filter strength to High",
+      "Mask all PII in the model output",
+      "Enable contextual grounding checks and block responses below the grounding threshold",
+      "Add competitor names to a denied topic"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "explanation": "Contextual grounding checks detect and block ungrounded responses, and grounding answers in retrieved citable sources reduces fabrication while enabling verification. Prompt Attack filters target injection, PII masking targets privacy, and denied topics target scope; none address factual hallucination.",
+    "sourceKey": "guardrails-contextual-grounding"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "single",
+    "question": "A compliance team must verify whether a batch of suspected AI-generated marketing images was created by their own Amazon Titan Image Generator versus a third-party tool, for a brand-misuse investigation. Which AWS capability gives the most reliable signal?",
+    "options": [
+      "Inspect each image's filename and creation timestamp",
+      "Use Bedrock's Titan watermark detection, which reports whether an image contains the invisible Titan watermark",
+      "Run the images through SageMaker Clarify bias detection",
+      "Compare the images against a denied-topics list in a Bedrock guardrail"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Titan watermark detection checks for the invisible watermark Titan embeds in images it generates, providing a reliable provenance signal distinguishing Titan-generated images from third-party content. Filenames/timestamps are unreliable, Clarify analyzes tabular/model bias, and guardrails operate on text policies, not image provenance.",
+    "sourceKey": "guardrails"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "single",
+    "question": "A team must screen a high-volume stream of pre-existing user-generated comments (not produced by any model) for toxicity and PII before storing them, reusing the same policy already protecting their Bedrock chatbot. What is the most appropriate way to apply the guardrail?",
+    "options": [
+      "Call the ApplyGuardrail API with the comment text and a source qualifier of INPUT against the existing guardrail",
+      "Recreate the toxicity and PII rules in a separate Lambda regex engine",
+      "Route every comment through an InvokeModel call solely to trigger the guardrail",
+      "Use SageMaker Model Monitor to scan the comments for toxicity"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "ApplyGuardrail evaluates standalone text against an existing guardrail without invoking a model, letting the team reuse the same toxicity/PII policy on pre-existing comments efficiently. Forcing an InvokeModel call wastes inference cost, reimplementing rules duplicates logic and drifts, and Model Monitor tracks model data quality, not text content screening.",
+    "sourceKey": "guardrails"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "single",
+    "question": "During red-teaming, testers bypass a Bedrock guardrail's denied topic on 'weapons manufacturing' by phrasing requests as fictional storytelling and obfuscated wording. Which improvement is MOST effective for this evasion pattern?",
+    "options": [
+      "Disable the denied topic and rely only on contextual grounding",
+      "Strengthen the denied topic with additional representative sample phrases covering paraphrases and roleplay framings, and combine it with the Prompt Attack and Misconduct content filters",
+      "Lower the denied topic's sensitivity to reduce false positives",
+      "Add the exact obfuscated strings the testers used to a word filter"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Denied topics generalize better with richer sample phrases that capture paraphrases and roleplay, and layering Misconduct content filters plus Prompt Attack detection provides defense in depth against framing-based evasion. Blocking exact strings is trivially bypassed, lowering sensitivity weakens protection, and grounding does not address disallowed-topic evasion.",
+    "sourceKey": "guardrails-components"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "single",
+    "question": "A hospital wants its Bedrock assistant to allow clinicians to enter patient identifiers for legitimate lookups but must guarantee patient identifiers are never returned to a separate patient-facing channel that reuses the same model. Which guardrail strategy is BEST?",
+    "options": [
+      "Use one guardrail that blocks PII on input for both channels",
+      "Disable PII controls and enforce separation only via IAM",
+      "Use two guardrails: a clinician-channel guardrail that masks PII only on output, and a patient-channel guardrail that blocks PII on both input and output",
+      "Use one guardrail that masks PII on output for both channels"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Different channels have different risk profiles, so separate guardrails let the clinician channel permit identifier input (masking only output) while the patient channel blocks PII entirely on input and output. A single shared policy cannot satisfy both needs, and IAM controls access but not in-content PII leakage.",
+    "sourceKey": "guardrails-components"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "single",
+    "question": "An analytics team must quantify, for a fraud-detection model, which input features most influence predictions overall to satisfy an explainability requirement in their model card, and to detect if the model relies disproportionately on a proxy for a protected attribute. Which SageMaker Clarify output is MOST appropriate?",
+    "options": [
+      "The Titan watermark detection report",
+      "Global SHAP feature-importance values aggregated across the dataset",
+      "The Difference in Proportions of Labels (DPL) pre-training metric",
+      "A single instance's local SHAP explanation"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Global SHAP feature importance summarizes how much each feature drives predictions across the dataset, supporting model-card explainability and revealing over-reliance on a protected-attribute proxy. DPL is a label-balance metric not feature attribution, a single local explanation is too narrow for overall behavior, and watermark detection is unrelated.",
+    "sourceKey": "model-evaluation"
+  },
+  {
+    "category": "Responsible AI & Guardrails",
+    "type": "multi",
+    "question": "An enterprise architecture board mandates a defense-in-depth responsible-AI posture for a public Bedrock assistant handling regulated content. Which combination of layered controls BEST reflects this principle? (Select THREE.)",
+    "options": [
+      "Relying only on the foundation model's built-in alignment with no guardrail",
+      "Bedrock Guardrails with Prompt Attack and content filters, denied topics, PII filters, and contextual grounding configured together",
+      "Application-side input validation and output post-processing in addition to the guardrail",
+      "Sole reliance on a single content filter at Medium strength with no logging",
+      "Pinned guardrail versions with invocation logging and trace for auditability"
+    ],
+    "correct": [
+      1,
+      2,
+      4
+    ],
+    "explanation": "Defense in depth combines multiple guardrail policies, complementary application-side validation/post-processing, and pinned versions with logging/trace for auditability. Relying on a single Medium filter without logging or on the model's built-in alignment alone provides no layered protection or audit trail.",
+    "sourceKey": "guardrails"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "A team must serve a 7B model with the LOWEST cost per inference at steady high throughput and is willing to compile/optimize the model. They are comparing accelerator families. Which instance choice generally gives the best price-performance for high-volume inference of a model that fits within its memory?",
+    "options": [
+      "inf2 instances (AWS Inferentia2) with the model compiled via the Neuron SDK / Optimum Neuron",
+      "trn1 instances (AWS Trainium) used in inference mode",
+      "g5.48xlarge instances kept at low utilization for latency headroom",
+      "p4d.24xlarge instances (A100) running the uncompiled model"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Inferentia2 (inf2) is purpose-built for cost-efficient inference and, after compiling with the Neuron SDK, typically delivers the best price-performance for high-volume serving of models that fit its memory. A100 (p4d) is powerful but expensive and oriented to training/very large models, Trainium (trn1) is optimized for training rather than inference economics, and deliberately underutilized g5 wastes money.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "An engineer is unsure which instance type and how many instances to provision for a new JumpStart LLM endpoint that must meet a 200 ms p99 latency target at 50 requests/second. They want data-driven recommendations rather than manual trial and error. Which SageMaker feature should they use?",
+    "options": [
+      "SageMaker Inference Recommender, which runs load tests across candidate instance types and returns latency, throughput, and cost recommendations",
+      "SageMaker Model Monitor with a custom latency baseline",
+      "SageMaker Clarify bias and explainability reports",
+      "SageMaker Debugger profiling rules"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Inference Recommender automates load testing across instance types and configurations and reports latency, throughput, and cost so you can pick a configuration that meets an SLA without manual benchmarking. Model Monitor watches data/quality drift, Clarify handles bias/explainability, and Debugger profiles training, none of which size inference endpoints.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "multi",
+    "question": "A team is moving a real-time LLM endpoint to a scale-to-zero autoscaling configuration to cut idle GPU cost. Which considerations are valid trade-offs or requirements they must account for? (Select TWO.)",
+    "options": [
+      "Latency-sensitive synchronous traffic with no tolerance for cold starts is an ideal fit for scale to zero",
+      "Scale to zero converts the endpoint to Serverless Inference automatically",
+      "Scale to zero removes the need to choose an instance type for the endpoint",
+      "The first request after scaling in to zero will incur a cold-start delay while a new instance and model are provisioned",
+      "They should configure a step or target-tracking scaling policy plus an appropriate cooldown to avoid thrashing on bursty traffic"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "explanation": "Scaling in to zero saves cost but means the first request after idle pays a cold-start penalty, and you still tune scaling policies and cooldowns so bursty traffic does not cause rapid scale in/out thrash. You still select an instance type, the endpoint remains real-time (not converted to Serverless), and strictly latency-sensitive traffic that cannot tolerate cold starts is a poor fit.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "A regulated bank wants to fine-tune an open-weights 8B model on sensitive proprietary data, keep full control of the weights, and host it in their own VPC with no data leaving their account boundary. They have an ML platform team. Bedrock or SageMaker?",
+    "options": [
+      "A third-party hosted API gated behind a firewall rule",
+      "SageMaker: fine-tune via JumpStart/training jobs and host on a VPC-attached endpoint, retaining the model artifacts in their own S3",
+      "Bedrock with Provisioned Throughput for any base FM and no fine-tuning",
+      "Bedrock on-demand with a system prompt that instructs the model to follow bank policies"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "SageMaker lets the bank fine-tune open weights, keep the resulting artifacts in their own account, and deploy to a VPC-isolated endpoint, satisfying control and data-residency requirements. Bedrock abstracts away weight ownership and not all FMs are customizable; a system prompt does not provide weight control or true data isolation, and a third-party API moves data outside the account.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "A model owner deploys a 34B code model with the LMI container on a single ml.g5.48xlarge (8x A10G, 192 GB GPU memory total). Generation throughput is far below expectations and GPU utilization is low. Inspecting the config, tensor_parallel_degree is set to 1. What is the BEST fix?",
+    "options": [
+      "Switch to a CPU instance to avoid GPU contention",
+      "Reduce the batch size to 1 to lower memory pressure",
+      "Increase tensor_parallel_degree to 8 so the model is sharded across all eight GPUs and utilizes the full instance",
+      "Disable continuous batching to simplify scheduling"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "With tensor_parallel_degree=1 the LMI container loads the model on a single GPU and ignores the other seven, causing low aggregate utilization and throughput; setting it to 8 shards the model across all GPUs of the instance. Reducing batch size, moving to CPU, or disabling continuous batching would all further hurt throughput.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "A product has predictable, steady production traffic for a 7B model 24/7 and wants to reduce hosting cost below standard on-demand SageMaker hosting pricing, while keeping the same managed endpoint. Which option is the BEST cost lever?",
+    "options": [
+      "Enable scale to zero so the endpoint is free overnight",
+      "Switch to Asynchronous Inference to batch the steady traffic",
+      "Move the workload to Serverless Inference to pay only per request",
+      "Purchase a SageMaker Savings Plan committing to a consistent hourly compute spend for a 1- or 3-year term"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "For steady, always-on usage, a SageMaker Savings Plan provides the deepest discount on hosting compute in exchange for a term commitment, directly lowering cost without changing the architecture. Serverless cannot host a 7B GPU model and is not cheaper at sustained high utilization, scale to zero gives no benefit on 24/7 traffic, and Async does not reduce per-hour instance cost for steady demand.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "multi",
+    "question": "An architect is choosing between Amazon Bedrock and self-hosting on SageMaker for a new generative feature. Which factors specifically favor choosing SageMaker over Bedrock? (Select TWO.)",
+    "options": [
+      "The required base model is an open-weights model not offered in the Bedrock catalog and must be heavily customized",
+      "The team needs fine-grained control over inference server internals such as LMI batching, tensor parallelism, and quantization",
+      "They need built-in, fully managed Guardrails with no custom container work",
+      "They want the fastest possible time-to-first-prototype with no ML ops staff",
+      "They want zero infrastructure management and per-token billing with no idle cost"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "SageMaker is favored when you must host an open-weights model outside Bedrock's catalog and when you need low-level control of the serving stack (LMI batching, tensor parallelism, quantization). Zero infra management, per-token billing, managed Guardrails, and fastest no-ops prototyping all favor Bedrock instead.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "SageMaker for Generative AI",
+    "type": "single",
+    "question": "A team serves a fine-tuned 7B model and wants to A/B test a new fine-tune against the current production model on live traffic, gradually shifting traffic and rolling back instantly if quality drops, all behind a single endpoint URL. Which SageMaker feature is the BEST fit?",
+    "options": [
+      "A Multi-Model Endpoint loading both variants by model name",
+      "Shadow testing with the new variant receiving 100% of traffic",
+      "Two production variants on one endpoint with weighted traffic splitting that can be adjusted or rolled back without changing the client",
+      "Two separate endpoints with a client-side coin flip to route traffic"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Production variants on a single endpoint let you assign and dynamically adjust traffic weights for A/B testing and instantly shift back to the stable variant, all transparent to the client. Client-side routing pushes logic to callers, Multi-Model Endpoints are for many distinct models rather than weighted experiments, and a shadow test does not serve a controlled live split.",
+    "sourceKey": "jumpstart"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "multi",
+    "question": "To minimize Bedrock spend without hurting user experience for an interactive assistant, which optimizations are sound? (Select TWO.)",
+    "options": [
+      "Always use the largest available model to reduce the number of retries",
+      "Switch all interactive traffic to Batch inference for the lower token price",
+      "Enable prompt caching for the large static instruction/context prefix reused across turns",
+      "Right-size the model, routing simple requests to a smaller/cheaper model and only escalating hard ones",
+      "Disable streaming so output tokens are not billed"
+    ],
+    "correct": [
+      2,
+      3
+    ],
+    "explanation": "Prompt caching cuts the cost of repeated prefixes and model right-sizing avoids paying premium rates for easy queries, both lowering cost while preserving interactivity. Batch is asynchronous and unsuitable for live chat, streaming does not change token billing, and defaulting to the largest model raises cost rather than lowering it.",
+    "sourceKey": "prompt-caching"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "A multi-account organization wants member accounts to share a single set of Provisioned Throughput model units to avoid each buying its own commitment, while still centralizing the spend. Which approach is most appropriate?",
+    "options": [
+      "Enable Bedrock cross-account model unit sharing in the Organizations console",
+      "Buy separate Provisioned Throughput in every account so each is isolated",
+      "Use a single SCP to automatically pool unused model units across accounts",
+      "Centralize Bedrock inference in a shared services account that owns the Provisioned Throughput, and let member accounts invoke it via cross-account roles or a private endpoint"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Provisioned Throughput is owned by the account that purchases it, so centralizing inference in a shared services account and granting cross-account/endpoint access lets teams share one commitment and consolidates spend. Buying per-account commitments fragments and wastes capacity, SCPs cannot pool capacity, and there is no Organizations feature that automatically shares model units.",
+    "sourceKey": "prov-throughput"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "A team wants to detect, in near real time, when a particular Bedrock model starts returning elevated client or server errors so they can fail over. Which is the most direct operational signal?",
+    "options": [
+      "Parse the S3 invocation logs hourly with Athena and alert on error strings",
+      "Poll CloudTrail every minute for failed InvokeModel events",
+      "Create CloudWatch alarms on the InvocationClientErrors / InvocationServerErrors (and InvocationThrottles) metrics in the AWS/Bedrock namespace",
+      "Watch the Billing metric for a sudden drop in charges"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Bedrock emits client-error, server-error, and throttle metrics to CloudWatch, so alarms on them give near-real-time error detection for failover. Athena over S3 logs is hourly and slow, CloudTrail polling is delayed and not designed for live alarms, and billing changes are a lagging, indirect indicator.",
+    "sourceKey": "model-invocation-logging"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "A data-privacy officer asks whether enabling Bedrock model invocation logging changes how Bedrock uses prompts and completions, and where the logged content resides. What is the accurate statement?",
+    "options": [
+      "Enabling logging opts your data into base-model training",
+      "Logged content is stored in an AWS-owned account accessible to model providers",
+      "Logging automatically shares prompts with the foundation model provider for quality review",
+      "Invocation logging stores prompts/completions only in the customer's own S3 bucket and/or CloudWatch log group; it does not cause AWS to use that content to train base models"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Invocation logs are delivered to the customer's own S3 bucket and/or CloudWatch log group, and Bedrock does not use customer prompts or completions to train base models. Logging is an audit feature, not a consent to training, and the content is not exposed to AWS-owned accounts or model providers.",
+    "sourceKey": "model-invocation-logging"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "Your application's per-account on-demand request and token-per-minute quotas for a model are consistently the binding constraint at peak, but traffic is steady all day. Comparing remedies, which is the most cost-effective long-term fix?",
+    "options": [
+      "Move the steady high-volume portion to Provisioned Throughput, which provides guaranteed capacity independent of on-demand account quotas",
+      "Repeatedly request on-demand quota increases as traffic grows",
+      "Shard the workload across many IAM users to multiply the quotas",
+      "Add more retries with longer backoff to push more through the existing quota"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "For steady, high, predictable volume, Provisioned Throughput supplies guaranteed capacity decoupled from on-demand account quotas and is the durable, cost-effective fix. Quota increases are not guaranteed and lag growth, on-demand quotas are account/model-scoped so splitting across IAM users does not multiply them, and more backoff only slows requests without adding capacity.",
+    "sourceKey": "prov-throughput"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "An evaluation job must score models on a sensitive internal dataset that cannot leave a specific encrypted S3 location, and the results report must also be encrypted with the team's KMS key. When configuring a Bedrock model evaluation job, what should you ensure?",
+    "options": [
+      "Embed the dataset inline in the job request to avoid using S3 at all",
+      "Reference the dataset in the approved S3 location, grant the evaluation service role read access and KMS decrypt, and specify the customer managed KMS key for the output results",
+      "Disable encryption on the output bucket because evaluation results are not sensitive",
+      "Copy the dataset to a public bucket so the evaluation service can read it"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "The evaluation job's service role needs read access and KMS decrypt for the source data, and you can specify a customer managed KMS key to encrypt the output, keeping sensitive data and results protected. Public buckets violate the constraint, disabling output encryption exposes results, and inline datasets are not how evaluation jobs ingest data.",
+    "sourceKey": "model-evaluation"
+  },
+  {
+    "category": "Security, Cost & Operations",
+    "type": "single",
+    "question": "Two teams debate IAM design: Team A proposes one broad role with bedrock:* used by all services; Team B proposes per-service roles each limited to specific actions and model ARNs with conditions. For a security-sensitive, audited environment, which is correct and why?",
+    "options": [
+      "Team B is wrong because IAM conditions cannot reference model ARNs",
+      "Team A, because bedrock:* is required for InvokeModel to function",
+      "Team A, because a single shared role simplifies CloudTrail since all activity appears under one identity",
+      "Team B, because per-service least-privilege roles limit blast radius, make CloudTrail attribution clear per service, and prevent unintended model or admin actions"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Distinct least-privilege roles scoped to required actions and model ARNs minimize blast radius and produce clear, per-service CloudTrail attribution, which is essential in an audited environment. A shared bedrock:* role grants far more than needed and muddies attribution, bedrock:* is not required for InvokeModel, and IAM resource ARNs/conditions do support scoping to specific models.",
+    "sourceKey": "security-iam"
+  }
+]

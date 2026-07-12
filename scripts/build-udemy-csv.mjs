@@ -4,7 +4,8 @@
 // Usage: node scripts/build-udemy-csv.mjs <output.csv>
 import { readFileSync, writeFileSync } from "node:fs";
 
-const out = process.argv[2] || "udemy/AWS-GenAI-Practice-Test-1.csv";
+const inPath = process.argv[2] || "data/test-1.json";
+const out = process.argv[3] || "udemy/AWS-GenAI-Practice-Test-1.csv";
 const BR = "https://docs.aws.amazon.com/bedrock/latest/userguide/";
 const SOURCES = {
   "what-is-bedrock": [BR + "what-is-bedrock.html", "Amazon Bedrock — What is Amazon Bedrock"],
@@ -51,7 +52,7 @@ const HEADER = ["Question", "Question Type",
 
 const esc = (v) => { const s = v == null ? "" : String(v); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
-const q = JSON.parse(readFileSync("data/test-1.json", "utf8"));
+const q = JSON.parse(readFileSync(inPath, "utf8"));
 const errs = [];
 const rows = [HEADER.map(esc).join(",")];
 
